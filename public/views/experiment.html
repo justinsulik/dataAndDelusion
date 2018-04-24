@@ -86,7 +86,7 @@
     beadTimeline.push(beadInstructions);
 
     var trainingTrial = {
-      type: 'beadTask',
+      type: 'beadtask',
       pickUrn: false,
       graded: false,
       training: true,
@@ -225,7 +225,7 @@
 
     beadDTD = {
         timeline: [{
-          type: 'beadTask',
+          type: 'beadtask',
           firstColor: jsPsych.timelineVariable('color'),
           colorRatio: jsPsych.timelineVariable('ratio'),
           beadCount: 100,
@@ -435,7 +435,7 @@
 
     var bade = {
       timeline: [{
-        type: 'BADE',
+        type: 'bade',
         rating_type: 'posterior',
         scale_labels: [
         'extremely\nimprobable',
@@ -483,7 +483,7 @@
     timeline.push(pdiInstructions);
 
     var pdi = {
-      type: 'PDI',
+      type: 'pdi',
       followUp: true
     };
 
@@ -536,7 +536,7 @@
     ];
 
     var crtTrial = {
-      type: 'CRT',
+      type: 'crt',
       question: jsPsych.timelineVariable('question'),
       unit: jsPsych.timelineVariable('unit'),
       options: jsPsych.timelineVariable('options'),
