@@ -1,0 +1,581 @@
+
+
+<!-- <!DOCTYPE html> -->
+<html>
+    <head>
+        <title>Experiment</title>
+        <script language="javascript" src="p5/p5.min.js"></script>
+        <script type="text/javascript" src="p5/addons/p5.dom.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script language="javascript" src="jspsych/jspsych.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-instructions.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-beadTask.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-survey-multi-choice.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-PDI.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-CRT.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-BADE.js"></script>
+        <link href="jspsych/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <link href="./css/survey.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body>
+    </body>
+    <script>
+
+
+
+    function shuffle(unshuffled){
+      // shuffle an array
+      var shuffled = [];
+      var N = unshuffled.length;
+      for( var i = 0; i < N; i++ ){
+        var index = Math.floor(Math.random() * (unshuffled.length));
+        var newValue = unshuffled[index];
+        shuffled.push(newValue);
+        unshuffled.splice(index, 1);
+      }
+      return shuffled;
+    };
+
+    function makeCode(len){
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwxy0123456789";
+        for( var i=0; i < len; i++ ){
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    };
+
+    var trialId = makeCode(6);
+    jsPsych.data.addProperties({trialId: trialId});
+
+    var timeline = [];
+    var beadTimeline = [];
+    var badeTimeline = [];
+
+    // initial instructions
+
+    var mainInstructions = {
+      type: 'instructions',
+      pages: ["You will do four tasks in this survey.",
+      "The first two involve you making decisions based on how probable something is.",
+      "Then you will answer some questions about your experiences and perceptions.",
+      "Finally, you will solve a few straightforward math problems."],
+      show_clickable_nav: true
+    };
+
+    timeline.push(mainInstructions);
+
+    // Bead task
+
+    var colors = shuffle([[0, 102, 153], [0, 153, 255], [51, 51, 255], [153, 153, 255], [255, 0, 255], [255, 153, 153]]);
+
+    var ratios1 = shuffle([0.6, 0.75, 0.85]);
+    var ratios2 = shuffle([0.6, 0.75, 0.85]);
+
+    var beadInstructions = {
+      type: 'instructions',
+      pages: ["In this task, we are going to draw colored beads out of an urn until you're confident what the color of the majority of beads in that urn is.",
+              "We will begin with some detailed instructions, accompanied by a visual illustration of the bead task.",
+              "After we've gone through the instructions, your understanding of the task will be tested.",
+              "You need to need to get <b>all</b> the comprehension questions right before you will can proceed to the actual task.",
+              "If you get <b>any</b> wrong, we'll go through the instructions and test your understanding again, until you get all the test questions right.",
+              "About 50% of participants get them all right on the first attempt, so it's in your best interest to read the instructions carefully and think about them, to avoid having to go over them again. The instructions start on the next page."],
+      show_clickable_nav: true
+    };
+
+    beadTimeline.push(beadInstructions);
+
+    var trainingTrial = {
+      type: 'beadTask',
+      pickUrn: false,
+      graded: false,
+      training: true,
+      firstColor: [20, 20, 20],
+      colorRatio: 0.7
+    };
+
+    var ifComprehensionInstructions = {
+      timeline: [{
+        type: 'instructions',
+        pages: ["Before beginning the task, we are going to check whether you've understood the previous instructions by asking some True/False questions.",
+                "You will not be able to proceed with the experiment until all of these comprehension questions are answered correctly.",
+                "If you get any of these wrong, the previous instructions will be replayed so that you can check what the right answers are."],
+        show_clickable_nav: true
+      }],
+      conditional_function: function(){
+        if(Object.keys(comprehensionData).length==0){
+          return true;
+        } else {
+          return false;
+        }
+      }
+    };
+
+    var comprehensionOptions= ['True', 'False'];
+
+    var comprehension1 = {
+      type: 'survey-multi-choice',
+      questions: [
+        {prompt: 'Each urn has different majority colors',
+          options: comprehensionOptions,
+          horizontal: true
+        },
+        {prompt: 'Beads will be drawn from both of the urns',
+          options: comprehensionOptions,
+          horizontal: true
+        },
+        {prompt: 'If five beads are drawn, there will five fewer beads left in the urn',
+          options: comprehensionOptions,
+          horizontal: true
+        },
+        {prompt: 'The ratio of colors in one urn is just the opposite of the ratio of colors in the other urn',
+          options: comprehensionOptions,
+          horizontal: true
+        },
+        {prompt: 'Beads are placed back in the urn after each draw',
+          options: comprehensionOptions,
+          horizontal: true
+        }
+      ]
+    };
+
+    var score = 0;
+    var ifFail = {
+      timeline: [{
+        type: 'instructions',
+        pages: function(){
+          return ['You got ' + score + '/5 correct. We will go through the demonstration again. The relevant information is highlighted for you.'];
+        },
+        show_clickable_nav: true
+      }],
+      conditional_function: function(){
+        if(Object.keys(comprehensionData).length>0){
+          return true;
+        } else {
+          return false;
+        }
+      }
+    };
+
+    var comprehensionData = {};
+
+    var loop_node = {
+      timeline: [ifFail, trainingTrial, ifComprehensionInstructions, comprehension1],
+      loop_function: function(data){
+          var currentAttempt = Object.keys(comprehensionData).length;
+          comprehensionData[currentAttempt] = [];
+          var correct = {"Q0": "True", "Q1" : "False", "Q2" : "False", "Q3" : "True", "Q4" : "True"};
+          score = 0;
+          var responses = JSON.parse(data.values()[data.values().length-1].responses);
+          for (var question in responses) {
+            if( responses[question] == correct[question] ){
+              score+=1;
+              comprehensionData[currentAttempt].push(1);
+            } else {
+              comprehensionData[currentAttempt].push(0);
+            }
+
+          }
+          if( score == Object.keys(correct).length ){
+            jsPsych.data.addProperties({comprehensionData: comprehensionData});
+            return false;
+          } else {
+            failMessage.pages[0] = 'You got ' + score + '/5 correct.'
+            return true;
+          }
+      }
+    };
+
+    beadTimeline.push(loop_node);
+
+    var instructionsStart = {
+      type: 'instructions',
+      pages: ["You got them all right! It's time to begin the task.",
+      "Remember, once we've randomly picked one of the urns, all beads will be drawn just from that one urn.",
+      "Beads will be drawn and then replaced in the urn, so the number of beads and proportion of colors will remain the same throughout the trial."],
+      show_clickable_nav: true
+    }
+
+    beadTimeline.push(instructionsStart);
+
+    var instructionsDTD = {
+      type: 'instructions',
+      pages: ["For the next three trials, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color.",
+      "After each draw, we'll ask you if you'd like to see another bead, or are ready to make your decision.",
+      "Whenever you're confident what the majority color is, just click that you're ready to decide."],
+      show_clickable_nav: true
+    };
+
+    var instructionsGE = {
+      type: 'instructions',
+      pages: ["For the next three trials, you will always see 10 beads before you can make a decision about what the majority color is.",
+      "After each draw, you'll rate how confident you are.",
+      "Once you've seen 10 beads, we will ask you to make a decision about what the majority color is."],
+      show_clickable_nav: true
+    };
+
+    var timelineVarsDTD = [
+      {color: colors[0],
+      ratio: ratios1[0]},
+      {color: colors[1],
+      ratio: ratios1[1]},
+      {color: colors[2],
+      ratio: ratios1[2]}
+    ];
+
+    beadDTD = {
+        timeline: [{
+          type: 'beadTask',
+          firstColor: jsPsych.timelineVariable('color'),
+          colorRatio: jsPsych.timelineVariable('ratio'),
+          beadCount: 100,
+          record: true,
+          graded: true,
+          feedback: false,
+          sequential: true,
+          drawCount: 100}],
+        timeline_variables: timelineVarsDTD,
+        randomize_order: true
+    };
+
+    var timelineVarsGE = [
+      {color: colors[3],
+      ratio: ratios2[0]},
+      {color: colors[4],
+      ratio: ratios2[1]},
+      {color: colors[5],
+      ratio: ratios2[2]}
+    ];
+
+    beadGE = {
+        timeline: [{
+          type: 'beadTask',
+          firstColor: jsPsych.timelineVariable('color'),
+          colorRatio: jsPsych.timelineVariable('ratio'),
+          beadCount: 100,
+          record: true,
+          graded: true,
+          feedback: false,
+          sequential: true,
+          allowChoice: false,
+          drawCount: 10}],
+        timeline_variables: timelineVarsGE,
+        randomize_order: true
+    };
+
+
+    if( Math.random() < 0.5 ){
+        beadTimeline = beadTimeline.concat([instructionsGE, beadGE, instructionsDTD, beadDTD]);
+    } else {
+        beadTimeline = beadTimeline.concat([instructionsDTD, beadDTD, instructionsGE, beadGE]);
+    }
+
+
+    // Bade task
+
+    var badeInstructions = {
+      type: 'instructions',
+      pages: ["In the next task, you will be rating how likely some statements are. We will then give you further information to see if you want to change your ratings.",
+      "For each trial, we will first ask you to rate how likely 4 statements are, all else being equal.",
+      "They may refer to random people, but you can still estimate how likely you think the statements are.",
+      "For example, if you were given the statements 'Harriet has less than a thousand dollars' and 'Harriest has more than a million dollars', you should rate the first statement as much more likely than the second because most people aren't millionaires.",
+      "As another example, if you were given the statements 'Chris is an astronaut' and 'Chris is a teacher', you should rate the second more likely because there are lots more teachers than astronauts.",
+      "Once you've rated how likely the statements are, we'll start giving you more information, piece by piece. This information may make you want to increase or decrease your previous ratings.",
+      "For example, if we told you that Harriet can't afford to go on vacation, it makes it even less probable that she has a million dollars. If we told you that she just bought another jet, it makes it more probable that she has a million dollars.",
+      "Ultimately, it may turn out that none of the statements are very probable, that one is more probable that the others, or that several are equally probable."],
+      show_clickable_nav: true
+    };
+
+    badeTimeline.push(badeInstructions);
+
+    var badeTrials = [
+      {trial_number: 0,
+      scenarios: ["Judy saved the little girl's life.",
+      "Judy's family supported Judy's decision to help the little girl.",
+      "Luckily, Judy is the same blood-type as the little girl."],
+      explanations: ["Judy is a fire-fighter.",
+      "Judy is a doctor.",
+      "Judy is a witch.",
+      "Judy is an organ donor."]},
+
+      {trial_number: 1,
+      scenarios: ["Sometimes Veronica goes home in tears.",
+      "Veronica does not have many friends.",
+      "Veronica is afraid of her classmates."],
+      explanations: ["Veronica is always overly dramatic.",
+      "Veronica is suffering from the side effects of her medication.",
+      "Veronica likes to water the plants with her tears.",
+      "Veronica is bullied at school."]},
+
+      {trial_number: 2,
+      scenarios: ["Janet is screaming.",
+      "Janet will have to go to court.",
+      "Janet is an irresponsible parent."],
+      explanations: ["Someone scratched the paint on Janet's new car.",
+      "Janet caught her husband cheating on her.",
+      "Janet's bad singing is often mistaken for screaming.",
+      "Janet's children are being taken away by Social Services."]},
+
+      {trial_number: 3,
+      scenarios: ["Luke spends lots of time driving.",
+      "Luke is a young man.",
+      "Luke's car often smells like pizza."],
+      explanations: ["Luke is a taxi driver.",
+      "Luke is an ambulance driver.",
+      "Luke is a fisherman.",
+      "Luke delivers pizza."]},
+
+      {trial_number: 4,
+      scenarios: ["Tiffany watches her diet.",
+      "Tiffany must be careful to avoid sugar.",
+      "Tiffany uses needles every day."],
+      explanations: ["Tiffany is a fitness instructor.",
+      "Tiffany has an eating disorder.",
+      "Tiffany does not know how to cook eggs.",
+      "Tiffany is diabetic."]},
+
+      {trial_number: 5,
+      scenarios: ["The woman has been in severe pain all day.",
+      "The woman is impatiently waiting for her special day to come.",
+      "The woman has a big belly."],
+      explanations: ["The woman is training to be a champion gymnast.",
+      "The woman has only days left to live.",
+      "The woman loves to be tickled.",
+      "The woman is about to have a baby."]},
+
+      {trial_number: 6,
+      scenarios: ["Amanda is very thin.",
+      "Amanda has a difficult life.",
+      "Amanda doesn't even have a home."],
+      explanations: ["Amanda is a runway model.",
+      "Amanda has an eating disorder.",
+      "Amanda has lost her fake teeth.",
+      "Amanda is homeless."]},
+
+      {trial_number: 7,
+      scenarios: ["Michael's job is to entertain people.",
+      "Michael is a little shy sometimes.",
+      "Michael sits in front of a computer writing all day long."],
+      explanations: ["Michael is a famous magician.",
+      "Michael the clown entertains sick children in the hospital.",
+      "Michael is a poker player.",
+      "Michael's job is to write novels."]},
+
+      {trial_number: 8,
+      scenarios: ["Nicholas is driving his car very fast.",
+      "Nicholas did not stop at the red light.",
+      "Nicholas injured a little girl with his car."],
+      explanations: ["Nicholas is running late for work.",
+      "Nicholas' wife is in labour.",
+      "Nicholas hates going for walks.",
+      "Nicholas is a hit and run offender."]},
+
+      {trial_number: 9,
+      scenarios: ["Natasha doesn't know that she's talking to her mother.",
+      "Natasha is confused and disoriented.",
+      "Natasha did not wear her helmet when she went biking."],
+      explanations: ["Natasha is at a Halloween costume party.",
+      "Natasha was just told that she was adopted as a child.",
+      "Natasha is very shy.",
+      "Natasha has lost her memory after being hit by a car."]},
+
+      {trial_number: 10,
+      scenarios: ["The picnic came to an abrupt end.",
+      "Everyone went home stunned from the picnic's outcome.",
+      "By the time the ambulance arrived it was too late."],
+      explanations: ["It started to rain unexpectedly.",
+      "The families began to argue with one another.",
+      "The volcano began to erupt.",
+      "Audrey died from an allergic reaction to a bee sting."]},
+
+      {trial_number: 11,
+      scenarios: ["People often dread visiting John.",
+      "John tries his best to make people feel comfortable.",
+      "John hands out free toothbrushes."],
+      explanations: ["John always tells his guests long and boring stories.",
+      "John is in the hospital.",
+      "John is a famous hockey player.",
+      "John is a dentist."]},
+
+      {trial_number: 12,
+      scenarios: ["Cindy is dancing.",
+      "Cindy is wearing a small dress.",
+      "The men clap and whistle when Cindy dances."],
+      explanations: ["Cindy is at a party.",
+      "Cindy is high on drugs at a rave.",
+      "Cindy is a member of a famous pop-music group.",
+      "Cindy is a stripper."]},
+
+      {trial_number: 13,
+      scenarios: ["Stan is on his knees",
+      "Stan is crying.",
+      "Stan's wife has packed her bags"],
+      explanations: ["Stan is praying.",
+      "Stan is about to propose to his fiance",
+      "Stan wishes he was a magic dwarf.",
+      "Stan can't find his purse."]},
+
+      {trial_number: 14,
+      scenarios: ["Gary is responsible for many lives.",
+      "Gary's work can get be quite boring and repetitive.",
+      "Gary's route is one of the busiest."],
+      explanations: ["Gary is an army general.",
+      "Gary is a surgeon.",
+      "Gary is a clown.",
+      "Gary is a sports-cast announcer."]},
+
+      {trial_number: 15,
+      scenarios: ["Eric often carries binoculars with him.",
+      "Eric always has an unpredictable schedule.",
+      "Eric tries to solve mysteries."],
+      explanations: ["Eric is a bird expert.",
+      "Eric is a stalker.",
+      "Eric is an astronaut.",
+      "Eric is a tennis player."]}
+    ];
+
+    var bade = {
+      timeline: [{
+        type: 'BADE',
+        rating_type: 'posterior',
+        scale_labels: [
+        'extremely\nimprobable',
+        'improbable',
+        'somewhat\nimprobable',
+        'as probable\nas not',
+        'somewhat\nprobable',
+        'probable\n',
+        'extremely\nprobable'],
+        scenarios: jsPsych.timelineVariable('scenarios'),
+        explanations: jsPsych.timelineVariable('explanations'),
+        trial_number: jsPsych.timelineVariable('trial_number'),
+      }],
+      timeline_variables: badeTrials,
+      randomize_order: true,
+      post_trial_gap: 900
+    }
+
+    badeTimeline.push(bade);
+
+
+    // Randomize order of bead/bade tasks
+
+    if( Math.random() < 0.5 ){
+      timeline = timeline.concat(beadTimeline)
+      timeline = timeline.concat(badeTimeline)
+    } else {
+      timeline = timeline.concat(badeTimeline)
+      timeline = timeline.concat(beadTimeline)
+    }
+
+
+    // task 3: PDI
+
+    var pdiInstructions = {
+      type: 'instructions',
+      pages: ["Almost there! Next is a quick questionnaire designed to measure beliefs and vivid mental experiences. ",
+      "We believe that they are much more common than has previously been supposed, and that most people have had some such experiences during their lives. ",
+      "Please answer the following questions as honestly as you can. ",
+      "There are no right or wrong answers, and there are no trick questions.",
+      "Please note that we are NOT asking about experiences people may have had when under the influence of drugs."],
+      show_clickable_nav: true
+    };
+
+    timeline.push(pdiInstructions);
+
+    var pdi = {
+      type: 'PDI',
+      followUp: true
+    };
+
+    timeline.push(pdi);
+
+
+    // task 4: CRT
+
+    var crt_instructions = {
+      type: "instructions",
+      show_clickable_nav: true,
+      pages: ["In the final task, you will solve some simple math or logic problems. They can all be worked out fairly straightforwardly. You certainly <b>don't</b> need paper and a pen/pencil for working them out. If you think you might, you're probably overthinking things.",
+      "Do not answer 'I don't know' or 'no idea' or similar. Just give your best answer.",
+      "Some of these problems are fairly common so there will be a checkbox to indicate whether you've seen a problem before.",
+      "You should answer regardless whether you've seen the problem before or not."]
+    };
+
+    timeline.push(crt_instructions);
+
+    var crt_questions = [
+    {qNo: 0, question: "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
+    unit: "cents"},
+    {qNo: 1, question: "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?",
+    unit: "minutes"},
+    {qNo: 2, question: "In a lake, there is a patch of lily pads. Every day, the patch doubles in size. If it takes 48 days for the patch to cover the entire lake, how long would it take for the patch to cover half of the lake?",
+    unit: "days"},
+    {qNo: 3, question: "If John can drink one barrel of water in 6 days, and Mary can drink one barrel of water in 12 days, how long would it take them to drink one barrel of water together?",
+    unit: "days"},
+    {qNo: 4, question:  "Jerry received both the 15th highest and the 15th lowest mark in the class. How many students are in the class?",
+    unit: "students"},
+    {qNo: 5, question: "A man buys a pig for $60, sells it for $70, buys it back for $80, and sells it finally for $90. How much has he made?",
+    unit: "dollars"},
+    {qNo: 6, question: "Simon decided to invest $8,000 in the stock market one day early in 2008. Six months after he invested, on July 17, the stocks he had purchased were down 50%. Fortunately for Simon, from July 17 to October 17, the stocks he had purchased went up 75%. At this point, Simon ...",
+    options: ["has broken even in the stock market", "is ahead of where he began", "has lost money"]},
+    {qNo: 7, question: "If three elves can wrap three toys in hour, how many elves are needed to wrap six toys in 2 hours?",
+    unit: "elves"},
+    {qNo: 8, question: "In an athletics team, tall members are three times more likely to win a medal than short members. This year the team has won 60 medals so far. How many of these have been won by short athletes?",
+    unit: "medals"},
+    {qNo: 9, question: "If you're running a race and you pass the person in second place, what place are you in?",
+    unit: "place"},
+    {qNo: 10, question: "A farmer had 15 sheep and all but 8 died. How many are left?",
+    unit: "sheep"},
+    {qNo: 11, question: "Emily's father has three daughters. The first two are named April and May. What is the third daughter's name?"},
+    {qNo: 12, question: "How many cubic feet of dirt are there in a hole that is 3' deep x 3' wide x 3' long?",
+    unit: "cubic feet"},
+    {qNo: 14, question: "A house contains a living room and a den that are perfectly square. The living room has 4 times the square footage of the den. If the walls in the den are 10 feet long, how long are the walls in the living room?",
+    unit: "feet"},
+    {qNo: 15, question: "A store owner reduced the price of a $100 pair of shoes by 10 percent. A week later, he reduced the price of the shoes by another 10 percent. How much do the shoes cost now?",
+    unit: "dollars"}
+    ];
+
+    var crtTrial = {
+      type: 'CRT',
+      question: jsPsych.timelineVariable('question'),
+      unit: jsPsych.timelineVariable('unit'),
+      options: jsPsych.timelineVariable('options'),
+      qNo: jsPsych.timelineVariable('qNo'),
+    };
+
+    var crtTrials = {
+        timeline: [crtTrial],
+        timeline_variables: crt_questions,
+    };
+
+    timeline.push(crtTrials);
+
+
+    jsPsych.init({
+        default_iti: 500,
+        timeline: timeline,
+        on_finish: function(){
+          var data = jsPsych.data.get().json();
+          save();
+          finish();
+        }
+    });
+
+function finish(){
+  window.location.href = "x4d89";
+}
+
+function save(){
+  var data = jsPsych.data.get().json();
+  console.log(data)
+  $.ajax({
+     type: 'POST',
+     url: '/experiment-data?trialId='+trialId,
+     data: data,
+     contentType: "application/json",
+   });
+}
+
+    </script>
+</html>

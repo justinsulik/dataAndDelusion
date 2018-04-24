@@ -1,0 +1,47 @@
+body {
+    text-align: left;
+}
+
+.parent {
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    width: 75%;
+    height: 100%;
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+}
+.child {
+    display: table-cell;
+    vertical-align: middle;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.splashscreen {
+  border: 1px solid black;
+}
+
+.instructions {
+  width: 900px;
+  height: 640px;
+  padding: 30px;
+}
+
+.jspsych-survey-multi-choice-option {
+  font-size: 12px;
+}
+
+.jspsych-display-element {
+  width: 500px;
+}
+/* .jspsych-survey-multi-choice-option > input {
+  opacity: 0;
+} */
+
+.estimateContainer {
+  width:600px;
+}
