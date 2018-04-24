@@ -140,14 +140,16 @@
     };
 
     var score = 0;
+    var failMessage = {
+      type: 'instructions',
+      pages: function(){
+        return ['You got ' + score + '/5 correct. We will go through the demonstration again. The relevant information is highlighted for you.'];
+      },
+      show_clickable_nav: true
+    };
+
     var ifFail = {
-      timeline: [{
-        type: 'instructions',
-        pages: function(){
-          return ['You got ' + score + '/5 correct. We will go through the demonstration again. The relevant information is highlighted for you.'];
-        },
-        show_clickable_nav: true
-      }],
+      timeline: [failMessage],
       conditional_function: function(){
         if(Object.keys(comprehensionData).length>0){
           return true;
@@ -180,7 +182,7 @@
             jsPsych.data.addProperties({comprehensionData: comprehensionData});
             return false;
           } else {
-            failMessage.pages[0] = 'You got ' + score + '/5 correct.'
+            failMessage.pages[0] = 'You got ' + score + '/5 correct. We will go through the demonstration again. The relevant information is highlighted for you.'
             return true;
           }
       }
