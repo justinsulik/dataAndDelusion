@@ -9,11 +9,11 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script language="javascript" src="jspsych/jspsych.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-instructions.js"></script>
-        <script language="javascript" src="jspsych/plugins/jspsych-beadTask.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-beadtask.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-survey-multi-choice.js"></script>
-        <script language="javascript" src="jspsych/plugins/jspsych-PDI.js"></script>
-        <script language="javascript" src="jspsych/plugins/jspsych-CRT.js"></script>
-        <script language="javascript" src="jspsych/plugins/jspsych-BADE.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-pdi.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-crt.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-bade.js"></script>
         <link href="jspsych/css/jspsych.css" rel="stylesheet" type="text/css"></link>
         <link href="./css/survey.css" rel="stylesheet" type="text/css"></link>
     </head>
@@ -200,7 +200,7 @@
 
     var instructionsDTD = {
       type: 'instructions',
-      pages: ["For the next three trials, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color.",
+      pages: ["For the following three trials, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color.",
       "After each draw, we'll ask you if you'd like to see another bead, or are ready to make your decision.",
       "Whenever you're confident what the majority color is, just click that you're ready to decide."],
       show_clickable_nav: true
@@ -208,7 +208,7 @@
 
     var instructionsGE = {
       type: 'instructions',
-      pages: ["For the next three trials, you will always see 10 beads before you can make a decision about what the majority color is.",
+      pages: ["For the following three trials, you will always see 10 beads before you can make a decision about what the majority color is.",
       "After each draw, you'll rate how confident you are.",
       "Once you've seen 10 beads, we will ask you to make a decision about what the majority color is."],
       show_clickable_nav: true
@@ -275,14 +275,13 @@
 
     var badeInstructions = {
       type: 'instructions',
-      pages: ["In the next task, you will be rating how likely some statements are. We will then give you further information to see if you want to change your ratings.",
-      "For each trial, we will first ask you to rate how likely 4 statements are, all else being equal.",
-      "They may refer to random people, but you can still estimate how likely you think the statements are.",
-      "For example, if you were given the statements 'Harriet has less than a thousand dollars' and 'Harriest has more than a million dollars', you should rate the first statement as much more likely than the second because most people aren't millionaires.",
-      "As another example, if you were given the statements 'Chris is an astronaut' and 'Chris is a teacher', you should rate the second more likely because there are lots more teachers than astronauts.",
-      "Once you've rated how likely the statements are, we'll start giving you more information, piece by piece. This information may make you want to increase or decrease your previous ratings.",
+      pages: ["In this task, we will first ask you to rate how probable 4 statements are, all else being equal.",
+      "They may refer to random people, but you can still estimate how probable you think the statements are.",
+      "For example, if you were given the statements 'Harriet has less than a thousand dollars' and 'Harriest has more than a million dollars', you should rate the first statement as much more probable than the second because most people aren't millionaires.",
+      "As another example, if you were given the statements 'Chris is an astronaut' and 'Chris is a teacher', you should rate the second more probable because there are lots more teachers than astronauts.",
+      "After you've rated how probable the statements are, we will start giving you extra information, piece by piece. This extra information may make you want to increase or decrease your previous ratings.",
       "For example, if we told you that Harriet can't afford to go on vacation, it makes it even less probable that she has a million dollars. If we told you that she just bought another jet, it makes it more probable that she has a million dollars.",
-      "Ultimately, it may turn out that none of the statements are very probable, that one is more probable that the others, or that several are equally probable."],
+      "Ultimately, it may turn out that none of the statements are very probable, that one is more probable that the others, or that several are equally probable. The task begins on the next screen"],
       show_clickable_nav: true
     };
 
