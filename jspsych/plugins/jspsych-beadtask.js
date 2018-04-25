@@ -69,13 +69,13 @@ jsPsych.plugins['beadtask'] = (function(){
       urnChoice: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Choice of urn',
-        default: Math.floor(Math.random() * 2),
+        default: Math.floor(Math.random()*2),
         description: 'Which physical urn to keep visible for drawing from. Is independent of the color of beads drawn (that is determined by trial.draws if given, else trial.rightAnswer)'
       },
       rightAnswer: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Right answer',
-        default: Math.floor(Math.random() * 2),
+        default: Math.floor(Math.random()*2),
         description: 'What the majority color will turn out to be (regardless which physical urn is the one that remains). Is overridden by the majority color in trial.draws, if given'
       },
       sequential: {
@@ -113,6 +113,8 @@ jsPsych.plugins['beadtask'] = (function(){
   };
 
   plugin.trial = function(display_element, trial){
+
+    console.log(trial.urnChoice)
 
     // check if p5 script is loaded
     if (window.p5){
@@ -260,7 +262,6 @@ Objects for transitioning between trial stages
             case 'pick':
 
               if( ! trial.pickUrn ){
-
                 if( trial.urnChoice < 1 ){
                   urn2.startFade = true;
                   beadStart = drawPosition(urn1);
