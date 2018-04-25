@@ -539,6 +539,14 @@
 
     // Biographic info
 
+    var bio_instructions = {
+      type: "instructions",
+      show_clickable_nav: true,
+      pages: ["You've finished all the tests! There are just three more questions about age/gender/education and then you're done."]
+    };
+
+    timeline.push(crt_instructions);
+
     function checkResponses(){
       //Check that all questions are answered, and that only numbers are used in responding to Age
       var age = $('input[name=ageRadio]', '#biography').val();

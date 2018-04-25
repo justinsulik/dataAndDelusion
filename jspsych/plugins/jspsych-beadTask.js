@@ -405,7 +405,7 @@ Objects for transitioning between trial stages
           if( trial.training ){
             var instructionString = 'Whenever a bead is drawn, we will <b>put it back</b> in the urn. '+
             'This means that the <b>number of beads</b> and the <b>ratio of bead colors</b> in the urn will <b>stay the same</b> throughout the whole task. '+
-            'Because the draw is random, the same bead <b>might</b> be drawn more than once. ';
+            'It also means that the same bead <b>might</b> be drawn more than once. ';
             if( trial.record ){
               instructionString += 'We will also keep a record of previous draws.';
             }
@@ -483,9 +483,9 @@ Objects for transitioning between trial stages
         button: '<div id="buttonFlexContainer"><button type="button" id="drawButton">Draw another bead from this urn</button></div> <div id="buttonFlexContainer"><button type="button" id="decideButton">Decide which urn this is</button></div>',
         instructions: function(){
           if( trial.incentive.cost > 0){
-            return 'Choose one of these options. If you decide and get it right, your bonus would be <b>$' + currentBonus + '</b>. If you would like to see another bead before deciding, your potential bonus decreases by $' + trial.incentive.cost;
+            return 'Would you like to see any more beads or have you decided which urn this is? If you decide and get it right, your bonus would be <b>$' + currentBonus + '</b>. If you would like to see another bead before deciding, your potential bonus decreases by $' + trial.incentive.cost;
           } else {
-              return 'Choose one of these options:';
+            return 'Would you like to see any more beads or have you decided which urn this is?';
           }
         },
         onClick: function(e){
