@@ -1,7 +1,7 @@
 // save data after each block
 // check screen size
 // update farewell screen address
-// 
+//
 
 
 // --- LOADING MODULES
@@ -17,7 +17,7 @@ const express = require('express'),
     {makeCode} = require('./helper/codeString.js');
 
 // --- INSTANTIATE THE APP
-const studyName = 'bead_randomization';
+const studyName = 'study1';
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(

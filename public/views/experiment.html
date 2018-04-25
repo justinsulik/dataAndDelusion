@@ -14,13 +14,13 @@
         <script language="javascript" src="jspsych/plugins/jspsych-pdi.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-crt.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-bade.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-external-html.js"></script>
         <link href="jspsych/css/jspsych.css" rel="stylesheet" type="text/css"></link>
         <link href="./css/survey.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body>
     </body>
     <script>
-
 
 
     function shuffle(unshuffled){
@@ -52,14 +52,15 @@
     var beadTimeline = [];
     var badeTimeline = [];
 
-    // initial instructions
+    // Initial instructions
 
     var mainInstructions = {
       type: 'instructions',
       pages: ["You will do four tasks in this survey.",
-      "The first two involve you making decisions based on how probable something is.",
+      "In the first two tasks, you will make decisions based on how probable something is.",
       "Then you will answer some questions about your experiences and perceptions.",
-      "Finally, you will solve a few straightforward math problems."],
+      "Finally, you will solve a few straightforward math problems.",
+      "After completing all tasks, we'll ask for some biographical information"],
       show_clickable_nav: true
     };
 
@@ -74,10 +75,10 @@
 
     var beadInstructions = {
       type: 'instructions',
-      pages: ["In this task, we are going to draw colored beads out of an urn until you're confident what the color of the majority of beads in that urn is.",
+      pages: ["In this task, we are going to draw colored beads out of an urn until you've discovered what the color of the majority of beads in that urn is.",
               "We will begin with some detailed instructions, accompanied by a visual illustration of the bead task.",
               "After we've gone through the instructions, your understanding of the task will be tested.",
-              "You need to need to get <b>all</b> the comprehension questions right before you will can proceed to the actual task.",
+              "You need to get <b>all</b> the comprehension questions right before you will can proceed to the actual task.",
               "If you get <b>any</b> wrong, we'll go through the instructions and test your understanding again, until you get all the test questions right.",
               "About 50% of participants get them all right on the first attempt, so it's in your best interest to read the instructions carefully and think about them, to avoid having to go over them again. The instructions start on the next page."],
       show_clickable_nav: true
@@ -279,7 +280,7 @@
       type: 'instructions',
       pages: ["In this task, we will first ask you to rate how probable 4 statements are, all else being equal.",
       "They may refer to random people, but you can still estimate how probable you think the statements are.",
-      "For example, if you were given the statements 'Harriet has less than a thousand dollars' and 'Harriest has more than a million dollars', you should rate the first statement as much more probable than the second because most people aren't millionaires.",
+      "For example, if you were given the statements 'Harriet has less than a thousand dollars' and 'Harriet has more than a million dollars', you should rate the first statement as much more probable than the second because most people aren't millionaires.",
       "As another example, if you were given the statements 'Chris is an astronaut' and 'Chris is a teacher', you should rate the second more probable because there are lots more teachers than astronauts.",
       "After you've rated how probable the statements are, we will start giving you extra information, piece by piece. This extra information may make you want to increase or decrease your previous ratings.",
       "For example, if we told you that Harriet can't afford to go on vacation, it makes it even less probable that she has a million dollars. If we told you that she just bought another jet, it makes it more probable that she has a million dollars.",
@@ -475,7 +476,7 @@
     var pdiInstructions = {
       type: 'instructions',
       pages: ["Almost there! Next is a quick questionnaire designed to measure beliefs and vivid mental experiences. ",
-      "We believe that they are much more common than has previously been supposed, and that most people have had some such experiences during their lives. ",
+      "We believe that these beliefs and experiences are much more common than has previously been supposed, and that most people have had some such experiences during their lives. ",
       "Please answer the following questions as honestly as you can. ",
       "There are no right or wrong answers, and there are no trick questions.",
       "Please note that we are NOT asking about experiences people may have had when under the influence of drugs."],
@@ -499,7 +500,7 @@
       show_clickable_nav: true,
       pages: ["In the final task, you will solve some simple math or logic problems. They can all be worked out fairly straightforwardly. You certainly <b>don't</b> need paper and a pen/pencil for working them out. If you think you might, you're probably overthinking things.",
       "Do not answer 'I don't know' or 'no idea' or similar. Just give your best answer.",
-      "Some of these problems are fairly common so there will be a checkbox to indicate whether you've seen a problem before.",
+      "Some of these problems are fairly common so there will be a checkbox to indicate whether you've seen a problem before today (e.g. in another Turk task, or read about online).",
       "You should answer regardless whether you've seen the problem before or not."]
     };
 
@@ -512,29 +513,13 @@
     unit: "minutes"},
     {qNo: 2, question: "In a lake, there is a patch of lily pads. Every day, the patch doubles in size. If it takes 48 days for the patch to cover the entire lake, how long would it take for the patch to cover half of the lake?",
     unit: "days"},
-    {qNo: 3, question: "If John can drink one barrel of water in 6 days, and Mary can drink one barrel of water in 12 days, how long would it take them to drink one barrel of water together?",
-    unit: "days"},
-    {qNo: 4, question:  "Jerry received both the 15th highest and the 15th lowest mark in the class. How many students are in the class?",
-    unit: "students"},
-    {qNo: 5, question: "A man buys a pig for $60, sells it for $70, buys it back for $80, and sells it finally for $90. How much has he made?",
-    unit: "dollars"},
-    {qNo: 6, question: "Simon decided to invest $8,000 in the stock market one day early in 2008. Six months after he invested, on July 17, the stocks he had purchased were down 50%. Fortunately for Simon, from July 17 to October 17, the stocks he had purchased went up 75%. At this point, Simon ...",
-    options: ["has broken even in the stock market", "is ahead of where he began", "has lost money"]},
-    {qNo: 7, question: "If three elves can wrap three toys in hour, how many elves are needed to wrap six toys in 2 hours?",
-    unit: "elves"},
-    {qNo: 8, question: "In an athletics team, tall members are three times more likely to win a medal than short members. This year the team has won 60 medals so far. How many of these have been won by short athletes?",
-    unit: "medals"},
-    {qNo: 9, question: "If you're running a race and you pass the person in second place, what place are you in?",
+    {qNo: 3, question: "If you're running a race and you pass the person in second place, what place are you in?",
     unit: "place"},
-    {qNo: 10, question: "A farmer had 15 sheep and all but 8 died. How many are left?",
+    {qNo: 4, question: "A farmer had 15 sheep and all but 8 died. How many are left?",
     unit: "sheep"},
-    {qNo: 11, question: "Emily's father has three daughters. The first two are named April and May. What is the third daughter's name?"},
-    {qNo: 12, question: "How many cubic feet of dirt are there in a hole that is 3' deep x 3' wide x 3' long?",
-    unit: "cubic feet"},
-    {qNo: 14, question: "A house contains a living room and a den that are perfectly square. The living room has 4 times the square footage of the den. If the walls in the den are 10 feet long, how long are the walls in the living room?",
-    unit: "feet"},
-    {qNo: 15, question: "A store owner reduced the price of a $100 pair of shoes by 10 percent. A week later, he reduced the price of the shoes by another 10 percent. How much do the shoes cost now?",
-    unit: "dollars"}
+    {qNo: 5, question: "Emily's father has three daughters. The first two are named April and May. What is the third daughter's name?"},
+    {qNo: 6, question: "How many cubic feet of dirt are there in a hole that is 3' deep x 3' wide x 3' long?",
+    unit: "cubic feet"}
     ];
 
     var crtTrial = {
@@ -552,6 +537,66 @@
 
     timeline.push(crtTrials);
 
+    // Biographic info
+
+    function checkResponses(){
+      //Check that all questions are answered, and that only numbers are used in responding to Age
+      var age = $('input[name=ageRadio]', '#biography').val();
+      var gender = $('input[name=genderRadio]:checked', '#biography').val();
+      var education = $('input[name=educationRadio]:checked', '#biography').val();
+
+      var ageFail = true;
+      var genderFail = true;
+      var educationFail = true;
+
+      if( age > 0 ){
+        ageFail = false;
+        $('#age>p').css('color', 'black');
+      } else {
+        $('#age>p').css('color', 'red');
+      }
+
+      if( gender == 'other' ){
+        var descr = $('input[name=other_text]', '#biography').val().replace(/\s+/g, '');
+        if( descr.length > 0 ){
+          gender = descr
+        }
+      }
+
+      if (typeof gender != 'undefined'){
+        genderFail = false;
+        $('#gender>p').css('color', 'black');
+      } else {
+        $('#gender>p').css('color', 'red');
+      }
+
+      if( education > 0 ){
+        educationFail = false;
+        $('#education>p').css('color', 'black');
+      } else {
+        $('#education>p').css('color', 'red');
+      }
+
+      if( educationFail | genderFail | ageFail ){
+        var alertMessage = "Please check you've provided an answer to all questions in red.";
+        if( ageFail ){
+          alertMessage += " Check that you've only included numbers when giving your age. "
+        }
+        alert(alertMessage);
+      } else {
+        return true;
+      }
+
+    };
+
+    var biography = {
+      type:'external-html',
+      url: "./views/biographic.html",
+      cont_btn: 'submitButton',
+      check_fn: checkResponses
+    }
+
+    timeline.push(biography);
 
     jsPsych.init({
         default_iti: 500,
