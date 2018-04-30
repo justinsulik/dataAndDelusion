@@ -69,13 +69,13 @@ jsPsych.plugins['beadtask'] = (function(){
       urnChoice: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Choice of urn',
-        default: Math.floor(Math.random()*2),
+        default: undefined,
         description: 'Which physical urn to keep visible for drawing from. Is independent of the color of beads drawn (that is determined by trial.draws if given, else trial.rightAnswer)'
       },
       rightAnswer: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Right answer',
-        default: Math.floor(Math.random()*2),
+        default: undefined,
         description: 'What the majority color will turn out to be (regardless which physical urn is the one that remains). Is overridden by the majority color in trial.draws, if given'
       },
       sequential: {
@@ -114,7 +114,9 @@ jsPsych.plugins['beadtask'] = (function(){
 
   plugin.trial = function(display_element, trial){
 
-    console.log(trial.urnChoice)
+    //If not specified, randomize these choices 0 or 1
+    trial.urnChoice = trial.urnChoice || Math.floor(Math.random()*2);
+    trial.rightAnswer = trial.rightAnswer || Math.floor(Math.random()*2);
 
     // check if p5 script is loaded
     if (window.p5){
@@ -262,7 +264,7 @@ Objects for transitioning between trial stages
             case 'pick':
 
               if( ! trial.pickUrn ){
-                if( trial.urnChoice < 1 ){
+                if( Math.random() < 0.5 ){
                   urn2.startFade = true;
                   beadStart = drawPosition(urn1);
                 } else {
@@ -755,12 +757,12 @@ Trial variables
 
     var confidenceInstructions = function(){
       if(firstRating) {
-        return "How confident are you about what the <b>majority color</b> in this <b>urn</b> is? Click along the bar to rate your confidence. "+
-               "In the middle means you are completely unsure - you think there's a 50:50 chance it could be either color. " +
-               "Clicking on either extreme means you're 100% sure <b>that</b> color is the majority. Once you've clicked, you can drag to adjust. "+
-               "When you're ready to submit your rating, click Next.";
+        return "How likely do you think it is that either of these is the <b>majority color</b> in this <b>urn</b>? "+
+               "In the middle means you are completely unsure - you think there's a 50:50 chance that either color could be in the majority. " +
+               "Clicking on either extreme means there's a 100% chance <b>that</b> color is the majority. Click along the bar to make your rating, then drag to adjust. "+
+               "When you're ready to proceed, click Next.";
       } else {
-        return "Please rate your confidence again about what the <b>majority color</b> in this <b>urn</b> is?";
+        return "Please rate how likely it is that either of these is the <b>majority color</b> in this <b>urn</b>.";
       }
     };
 
@@ -1106,11 +1108,11 @@ Trial variables
         sketch.textAlign(sketch.CENTER);
         sketch.fill(150);
         if( $('#estimateContainer').attr('over') == 'true' ){
-        sketch.text('100%\nsure',200,this.thumbY+20);
-        sketch.text('75%\nsure',300,this.thumbY+20);
-        sketch.text('50:50\nunsure',400,this.thumbY+20);
-        sketch.text('75%\nsure',500,this.thumbY+20);
-        sketch.text('100%\nsure',600,this.thumbY+20);
+        sketch.text('100%\nchance',200,this.thumbY+20);
+        sketch.text('75%\nchance',300,this.thumbY+20);
+        sketch.text('50:50\nchance',400,this.thumbY+20);
+        sketch.text('75%\nchance',500,this.thumbY+20);
+        sketch.text('100%\nchance',600,this.thumbY+20);
         }
         if( this.thumbCreated & $('#estimateContainer').attr('over') == 'true' ){
           var labelParts = this.valueLabel.split(":");
@@ -1523,7 +1525,7 @@ Input handlers
 */
 
   $("#buttonContainer").on("click", "button", function(e){
-    console.log(trialControl.stage);
+    // console.log(trialControl.stage);
     trialControl.data.onClick(e);
 
   });

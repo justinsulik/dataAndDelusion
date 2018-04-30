@@ -51,19 +51,27 @@ app.get('/', (req, res) => {
     const assignmentId = req.query.assignmentId || '';
     const hitId = req.query.hitId || '';
     const completionCode = makeCode(2)+'3'+makeCode(5)+'iTi'+makeCode(4)+'w'+makeCode(2);
+    const taskId = makeCode(2)+'5'+makeCode(5)+'nMn'+makeCode(4)+'z'+makeCode(2);
     tasks.save({
         "workerId": workerId,
         "hitId": hitId,
         "assignmentId": assignmentId,
         "completionCode": completionCode,
         "sessionId": sessId,
-        "studyName": studyName
+        "studyName": studyName,
+        "taskId": taskId
     });
-    res.render('consent.html');
+    res.render('consent.html', {taskId: taskId});
 });
 
 app.get('/experiment', (req, res) => {
-    res.render('experiment.html');
+    var taskId = req.query.test;
+    if( taskId.length > 0 ){
+        res.render('experiment.html', {taskId: taskId});
+    } else {
+        res.render('experiment.html');
+    }
+
 });
 
 app.get('/x4d89', (req, res) => {
@@ -106,6 +114,7 @@ app.get('/x4d89', (req, res) => {
 
 app.post('/experiment-data', function(req, res){
   const trialId = req.query.trialId || 'none';
+  console.log(trialId)
   const sessId = req.session.id;
   const data = req.body;
   console.log('Preparing to save trial data...', sessId);
@@ -115,7 +124,9 @@ app.post('/experiment-data', function(req, res){
       "trialId": trialId,
       "studyName": studyName,
   });
+  res.send(200);
   res.end();
+  console.log('Data saved...')
 });
 
 

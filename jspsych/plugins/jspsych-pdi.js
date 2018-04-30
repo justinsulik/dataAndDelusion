@@ -34,6 +34,12 @@ jsPsych.plugins["pdi"] = (function() {
         default: true,
         pretty_name: 'Randomize order',
         description: 'If true, the order of items is randomized'
+      },
+      attentionCheck: {
+        type: jsPsych.plugins.parameterType.BOOL,
+        default: true,
+        pretty_name: 'Attention check',
+        description: 'If true, include an attention check question'
       }
     }
   };
@@ -147,6 +153,9 @@ trial variables and functions
         'Do you ever feel as if your thoughts were blocked by someone or something else?',
         'Do you ever feel as if other people can read your mind?'
       ];
+    }
+    if( trial.attentionCheck ){
+      questions = questions.concat(['Have you ever seen a purple unicorn? Respond yes and set all the sliders to maximum value.']);
     }
 
     var saveResponses = function(){

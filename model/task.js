@@ -8,6 +8,7 @@ const taskSchema = new mongoose.Schema({
   sessionId: String,
   created: { type: Date, default: Date.now },
   studyName: String,
+  taskId: String
 });
 
 let Task = module.exports = mongoose.model('Task', taskSchema);

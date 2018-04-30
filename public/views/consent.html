@@ -15,11 +15,14 @@
                       More detailed instructions will be provided if you decide to continue.
                     </p>
                     <p>
-                      We will also be checking how well you understand the instructions and the experiment.
+                      The content pane of your browser window needs to be at least 800x600 pixels for you to take part.
+                    </p>
+                    <p>
+                      We check how well you understand the instructions and the experiment.
                     </p>
                     <p>
                       The results of this research will only be used for scientific purposes.
-                      The results can be presented at conferences and can be published in scientific journals.
+                      The results may be presented at conferences and may be published in scientific journals.
                       The results may also be published in newspapers, promotional material used by the university, or <a href="https://www.royalholloway.ac.uk/psychology/home.aspx" target='_blank'>on the website of the university department</a>.
                       Finally, the data may be made available publically via the <a href='https://osf.io/' target='_blank'>Open Science Framework</a>.
                     </p>
@@ -34,9 +37,22 @@
                       Participation in this experiment is voluntary. To collect your full payment, you will need to enter a completion code, which you will receive after the completion of the experiment.
                       Although you are free to withdraw your participation at any time, if you do not complete the experiment after consenting, you will not receive a completion code and will be unable to claim your payment.
                     </p>
-                    <button type='button' onclick = "window.location = 'experiment'">Click here to consent and proceed to the experiment!</button>
+                    <button type='button' id='consentButton'>Click here to consent and proceed to the experiment!</button>
                 </div>
             </div>
         </div>
     </body>
+<script>
+var testString = JSON.stringify('<%- taskId %>');
+var test;
+if( testString.length > 0 ){
+  test = JSON.parse(testString);
+} else {
+  test = 'aOb7y';
+}
+
+$('#consentButton').click(function(){
+  window.location.href = "experiment?test="+test;
+})
+</script>
 </html>

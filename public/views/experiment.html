@@ -45,8 +45,15 @@
         return text;
     };
 
-    var trialId = makeCode(6);
-    jsPsych.data.addProperties({trialId: trialId});
+    var testString = JSON.stringify('<%- taskId %>');
+    if( testString.length > 0 ){
+      test = JSON.parse(testString);
+    } else {
+      test = 'aOb7y';
+    }
+
+    jsPsych.data.addProperties({taskId: test});
+
 
     var timeline = [];
     var beadTimeline = [];
@@ -60,7 +67,9 @@
       "In the first two tasks, you will make decisions based on how probable something is.",
       "Then you will answer some questions about your experiences and perceptions.",
       "Finally, you will solve a few straightforward math problems.",
-      "After completing all tasks, we'll ask for some biographical information"],
+      "After completing all tasks, we'll ask for some biographical information",
+      "Please do not google ANY of the answers. We are interested in your honest responses.",
+      "The first task is introduced on the next screen."],
       show_clickable_nav: true
     };
 
@@ -125,7 +134,7 @@
           options: comprehensionOptions,
           horizontal: true
         },
-        {prompt: 'If five beads are drawn, there will five fewer beads left in the urn',
+        {prompt: 'If five beads are drawn, there will be five fewer beads left in the urn',
           options: comprehensionOptions,
           horizontal: true
         },
@@ -144,7 +153,7 @@
     var failMessage = {
       type: 'instructions',
       pages: function(){
-        return ['You got ' + score + '/5 correct. We will go through the demonstration again. The relevant information is highlighted for you.'];
+        return ['You got ' + score + '/5 correct. We will go through the demonstration again.'];
       },
       show_clickable_nav: true
     };
@@ -180,7 +189,7 @@
 
           }
           if( score == Object.keys(correct).length ){
-            jsPsych.data.addProperties({comprehensionData: comprehensionData});
+            jsPsych.data.get().addToLast({comprehensionData: comprehensionData});
             return false;
           } else {
             failMessage.pages[0] = 'You got ' + score + '/5 correct. We will go through the demonstration again. The relevant information is highlighted for you.'
@@ -190,6 +199,7 @@
     };
 
     beadTimeline.push(loop_node);
+
 
     var instructionsStart = {
       type: 'instructions',
@@ -236,7 +246,7 @@
           graded: true,
           feedback: false,
           sequential: true,
-          drawCount: 100}],
+          drawCount: 30}],
         timeline_variables: timelineVarsDTD,
         randomize_order: true
     };
@@ -280,11 +290,11 @@
       type: 'instructions',
       pages: ["In this task, we will first ask you to rate how probable 4 statements are, all else being equal.",
       "They may refer to random people, but you can still estimate how probable you think the statements are.",
-      "For example, if you were given the statements 'Harriet has less than a thousand dollars' and 'Harriet has more than a million dollars', you should rate the first statement as much more probable than the second because most people aren't millionaires.",
+      "For example, if you were given the statements 'Harriet has less than a thousand dollars' and 'Harriet has more than a million dollars', you might rate the first statement as much more probable than the second because most people aren't millionaires.",
       "As another example, if you were given the statements 'Chris is an astronaut' and 'Chris is a teacher', you should rate the second more probable because there are lots more teachers than astronauts.",
-      "After you've rated how probable the statements are, we will start giving you extra information, piece by piece. This extra information may make you want to increase or decrease your previous ratings.",
+      "After you've rated how probable the statements are, we will start giving you extra information, piece by piece, about the same people. This extra information may make you want to change your previous probability ratings.",
       "For example, if we told you that Harriet can't afford to go on vacation, it makes it even less probable that she has a million dollars. If we told you that she just bought another jet, it makes it more probable that she has a million dollars.",
-      "Ultimately, it may turn out that none of the statements are very probable, that one is more probable that the others, or that several are equally probable. The task begins on the next screen"],
+      "Ultimately, it may turn out that <b>none</b> of the statements is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. The task begins on the next screen"],
       show_clickable_nav: true
     };
 
@@ -409,13 +419,13 @@
       "Cindy is a stripper."]},
 
       {trial_number: 13,
-      scenarios: ["Stan is on his knees",
+      scenarios: ["Stan is on his knees.",
       "Stan is crying.",
-      "Stan's wife has packed her bags"],
+      "Stan's wife has packed her bags."],
       explanations: ["Stan is praying.",
-      "Stan is about to propose to his fiance",
+      "Stan is about to propose to his fianc&#xE9;e.",
       "Stan wishes he was a magic dwarf.",
-      "Stan can't find his purse."]},
+      "Stan can't find his glasses."]},
 
       {trial_number: 14,
       scenarios: ["Gary is responsible for many lives.",
@@ -433,7 +443,16 @@
       explanations: ["Eric is a bird expert.",
       "Eric is a stalker.",
       "Eric is an astronaut.",
-      "Eric is a tennis player."]}
+      "Eric is a tennis player."]},
+
+      {trial_number: 16,
+      scenarios: ["Susan can hardly speak or think.",
+      "Susan made a bad decision in her past.",
+      "Set all response sliders to zero."],
+      explanations: ["Susan is very drunk.",
+      "Susan is mentally handicapped.",
+      "Susan has been kidnapped.",
+      "Susan does not like doing much."]}
     ];
 
     var bade = {
@@ -478,7 +497,6 @@
       pages: ["Almost there! Next is a quick questionnaire designed to measure beliefs and vivid mental experiences. ",
       "We believe that these beliefs and experiences are much more common than has previously been supposed, and that most people have had some such experiences during their lives. ",
       "Please answer the following questions as honestly as you can. ",
-      "There are no right or wrong answers, and there are no trick questions.",
       "Please note that we are NOT asking about experiences people may have had when under the influence of drugs."],
       show_clickable_nav: true
     };
@@ -499,9 +517,7 @@
       type: "instructions",
       show_clickable_nav: true,
       pages: ["In the final task, you will solve some simple math or logic problems. They can all be worked out fairly straightforwardly. You certainly <b>don't</b> need paper and a pen/pencil for working them out. If you think you might, you're probably overthinking things.",
-      "Do not answer 'I don't know' or 'no idea' or similar. Just give your best answer.",
-      "Some of these problems are fairly common so there will be a checkbox to indicate whether you've seen a problem before today (e.g. in another Turk task, or read about online).",
-      "You should answer regardless whether you've seen the problem before or not."]
+      "Do not answer 'I don't know' or 'no idea' or similar. Just give your best answer."]
     };
 
     timeline.push(crt_instructions);
@@ -519,7 +535,9 @@
     unit: "sheep"},
     {qNo: 5, question: "Emily's father has three daughters. The first two are named April and May. What is the third daughter's name?"},
     {qNo: 6, question: "How many cubic feet of dirt are there in a hole that is 3' deep x 3' wide x 3' long?",
-    unit: "cubic feet"}
+    unit: "cubic feet"},
+    {qNo: 7, question: "How many days are there in a week? Enter double the actual number",
+    unit: "days"}
     ];
 
     var crtTrial = {
@@ -528,6 +546,7 @@
       unit: jsPsych.timelineVariable('unit'),
       options: jsPsych.timelineVariable('options'),
       qNo: jsPsych.timelineVariable('qNo'),
+      naivete: false
     };
 
     var crtTrials = {
@@ -537,25 +556,46 @@
 
     timeline.push(crtTrials);
 
+    var crtNaivete = {
+      type: 'survey-multi-choice',
+      questions: [
+        {prompt: "The problems you've just finished are adapted from classic problems that are quite common on Turk, or web pages or books about problem solving, so you may have seen them before.<br><br>"+
+        "You may have seen them with different wording (e.g., referring to the cost of a bat and a ball, time taking for machines to make widgets, and the time taken for lily pads to grow)<br><br>"+
+        "Have you seen any of these problems before? Please answer honestly since it won't affect the rest of the survey or your payment, but will affect our data.<br><br>",
+          options: [' Definitely not', ' Probably not', ' Uncertain', ' Probably yes', ' Definitely yes'],
+          horizontal: true
+        }
+      ]
+    }
+
+    timeline.push(crtNaivete);
+
     // Biographic info
 
     var bio_instructions = {
       type: "instructions",
       show_clickable_nav: true,
-      pages: ["You've finished all the tests! There are three more questions about age/gender/education and then you're done."]
+      pages: ["You've finished all the tests! There are a few more questions about age/gender/education and then you're done."]
     };
 
-    timeline.push(crt_instructions);
+    timeline.push(bio_instructions);
+
+    var bioData;
 
     function checkResponses(){
       //Check that all questions are answered, and that only numbers are used in responding to Age
       var age = $('input[name=ageRadio]', '#biography').val();
       var gender = $('input[name=genderRadio]:checked', '#biography').val();
       var education = $('input[name=educationRadio]:checked', '#biography').val();
+      var language = $('input[name=languageRadio]:checked', '#biography').val();
+      var google = $('input[name=googleRadio]:checked', '#biography').val();
 
       var ageFail = true;
       var genderFail = true;
+      var genderSelfDescribe = false;
       var educationFail = true;
+      var languageFail = true;
+      var googleFail = true;
 
       if( age > 0 ){
         ageFail = false;
@@ -565,8 +605,10 @@
       }
 
       if( gender == 'other' ){
+        genderSelfDescribe = true;
         var descr = $('input[name=other_text]', '#biography').val().replace(/\s+/g, '');
         if( descr.length > 0 ){
+          genderSelfDescribe = false;
           gender = descr
         }
       }
@@ -585,13 +627,37 @@
         $('#education>p').css('color', 'red');
       }
 
-      if( educationFail | genderFail | ageFail ){
+      if( language >= 0 ){
+        languageFail = false;
+        $('#language>p').css('color', 'black');
+      } else {
+        $('#language>p').css('color', 'red');
+      }
+
+      if( google >= 0 ){
+        googleFail = false;
+        $('#google>p').css('color', 'black');
+      } else {
+        $('#google>p').css('color', 'red');
+      }
+
+      if( educationFail | genderFail | ageFail | languageFail | googleFail ){
         var alertMessage = "Please check you've provided an answer to all questions in red.";
         if( ageFail ){
           alertMessage += " Check that you've only included numbers when giving your age. "
         }
+        if( genderSelfDescribe ){
+          alertMessage += " If you've chosen to self-describe your gender, please fill in a value. "
+        }
         alert(alertMessage);
       } else {
+        bioData = {
+          age: age,
+          gender: gender,
+          education: education,
+          language: language,
+          google: google
+        };
         return true;
       }
 
@@ -606,13 +672,18 @@
 
     timeline.push(biography);
 
+
     jsPsych.init({
         default_iti: 500,
+        exclusions: {
+          min_width: 800,
+          min_height: 600
+        },
         timeline: timeline,
         on_finish: function(){
-          var data = jsPsych.data.get().json();
+          jsPsych.data.get().addToLast({biodata: bioData});
           save();
-          finish();
+
         }
     });
 
@@ -621,13 +692,28 @@ function finish(){
 }
 
 function save(){
-  var data = jsPsych.data.get().json();
-  console.log(data)
+  var data = jsPsych.data.get();
+  var interaction_data = jsPsych.data.getInteractionData();
+  if( interaction_data.count() > 0 ){
+    data = data.join(interaction_data)
+  }
+
+  data = data.json();
+  console.log(data);
+
   $.ajax({
      type: 'POST',
-     url: '/experiment-data?trialId='+trialId,
+     url: '/experiment-data?trialId='+test,
      data: data,
      contentType: "application/json",
+     success: function () {
+        console.log("Success")
+        finish();
+      },
+      error: function (e) {
+        console.log("error", e);
+        finish();
+      }
    });
 }
 
