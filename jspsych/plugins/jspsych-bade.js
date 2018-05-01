@@ -36,7 +36,7 @@ jsPsych.plugins["bade"] = (function() {
       },
       explanation_types: {
         type: jsPsych.plugins.parameterType.STRING,
-        default: ['lure1', 'lure2', 'true', 'absurd'],
+        default: ['lure1', 'lure2', 'absurd', 'true'],
         pretty_name: 'Explanation types',
         description: 'An array of explanation types. Intended to allow these labels to be saved along with the other data, instead of at a later merge'
       },
