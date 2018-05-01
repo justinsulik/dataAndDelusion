@@ -79,8 +79,34 @@
 
     var colors = shuffle([[0, 102, 153], [0, 153, 255], [51, 51, 255], [153, 153, 255], [255, 0, 255], [255, 153, 153]]);
 
-    var ratios1 = shuffle([0.6, 0.75, 0.85]);
-    var ratios2 = shuffle([0.6, 0.75, 0.85]);
+    var ratios1 = shuffle([0.6, 0.70, 0.85]);
+    var ratios2 = shuffle([0.6, 0.70, 0.85]);
+
+
+    function flipdraws(draws){
+      // Randomly flip a list of draws, so that the majority color could 0s or 1s
+      // For the inputs below, it's always 0s
+      var flip = Math.random();
+      var out = [];
+      if( flip < 0.5){
+        draws.forEach(function(e){
+          out.push(Math.abs(e-1));
+        });
+        return out;
+      } else {
+        return draws;
+      }
+
+    }
+
+    var draws1 = {0.6: flipdraws([0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0]),
+                  0.7: flipdraws([0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0]),
+                  0.85: flipdraws([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0])};
+    var draws2 = {0.6:  flipdraws([0, 0, 1, 0, 0, 1, 0, 0, 1, 0]),
+                  0.7:  flipdraws([0, 0, 0, 1, 0, 0, 1, 0, 0, 1]),
+                  0.85: flipdraws([0, 0, 0, 0, 1, 0, 0, 0, 0, 1])};
+
+
 
     var beadInstructions = {
       type: 'instructions',
@@ -229,11 +255,14 @@
 
     var timelineVarsDTD = [
       {color: colors[0],
-      ratio: ratios1[0]},
+      ratio: ratios1[0],
+      draws: draws1[ratios1[0]]},
       {color: colors[1],
-      ratio: ratios1[1]},
+      ratio: ratios1[1],
+      draws: draws1[ratios1[1]]},
       {color: colors[2],
-      ratio: ratios1[2]}
+      ratio: ratios1[2],
+      draws: draws1[ratios1[2]]}
     ];
 
     beadDTD = {
@@ -241,6 +270,7 @@
           type: 'beadtask',
           firstColor: jsPsych.timelineVariable('color'),
           colorRatio: jsPsych.timelineVariable('ratio'),
+          draws: jsPsych.timelineVariable('draws'),
           beadCount: 100,
           record: true,
           graded: true,
@@ -253,11 +283,14 @@
 
     var timelineVarsGE = [
       {color: colors[3],
-      ratio: ratios2[0]},
+      ratio: ratios2[0],
+      draws: draws2[ratios2[0]]},
       {color: colors[4],
-      ratio: ratios2[1]},
+      ratio: ratios2[1],
+      draws: draws2[ratios2[1]]},
       {color: colors[5],
-      ratio: ratios2[2]}
+      ratio: ratios2[2],
+      draws: draws2[ratios2[2]]}
     ];
 
     beadGE = {
