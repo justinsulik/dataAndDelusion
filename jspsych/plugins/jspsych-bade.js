@@ -90,6 +90,12 @@ jsPsych.plugins["bade"] = (function() {
         default: 0,
         pretty_name: 'Trial number',
         description: 'Integer tracking which BADE scenario is being used'
+      },
+      character_name: {
+        type: jsPsych.plugins.parameterType.STRING,
+        default: undefined,
+        pretty_name: 'Character name',
+        description: "If defined, use the character's name in the rating instructions in order to be clear that the scenario presents more info about the same person"
       }
     }
   };
@@ -123,30 +129,37 @@ trial variables and functions
     var instructions;
     var currentSketch;
 
+    var nameString = '';
+    if( trial.character_name ){
+      nameString = ' about ' + trial.character_name + ' ';
+    }
+
+
     if( trial.rating_type == 'posterior'){
       instructions = {
         0: 'Read the sentences below. Click on the bars underneath each statement to rate <b>how likely</b> you think it is to be <b>true</b>, then click "Next"',
-        1: 'You will shortly be shown a scenario in the box above. You will have to use the scenario to decide how <b>probable</b> the sentences below are. Click "Next" for the first piece of information.',
-        2: 'Given the above scenario, rate how <b>probable</b> you think the statements below are, then click "Next"',
-        3: 'Given the above scenario, rate how <b>probable</b> you think the statements below are, then click "Next"'
+        1: 'You will shortly be shown more information'+nameString+' in the box above. Use the extra information to decide how <b>probable</b> the statements below are. Click "Next" for the first piece of information.',
+        2: 'Given this new information'+nameString+' above, rate how <b>probable</b> the statements below are now, then click "Next"',
+        3: 'Given this new information'+nameString+' above, rate how <b>probable</b> the statements below are now, then click "Next"',
       };
     } else if(trial.rating_type == 'explain' ){
       trial.rate_priors = false;
       instructions = {
-        1: 'You will shortly be shown a scenario in the box above. You will have to decide how well the statements below <b>explain</b> the scenario above. Click "Next" for the first piece of information.',
-        2: 'Rate how well the statements below <b>explain</b> the scenario above, then click "Next"',
-        3: 'Rate how well the statements below <b>explain</b> the scenario above, then click "Next"'
+        1: 'You will shortly be shown more information'+nameString+' in the box above. You will have to decide how well the statements below <b>explain</b> the scenario above. Click "Next" for the first piece of information.',
+        2: 'Given this new information'+nameString+' above, rate how well the statements below <b>explain</b> the above scenario now, then click "Next"',
+        3: 'Given this new information'+nameString+' above, rate how well the statements below <b>explain</b> the above scenario now, then click "Next"'
       };
 
     } else if(trial.rating_type == 'plausibility' ){
       instructions = {
         0: 'Read the sentences below. Click on the bars underneath each statement to rate how <b>plausible</b> you think it is, then click "Next"',
-        1: 'You will shortly be shown a scenario in the box above. You will have to use the scenario to decide how <b>plausible</b> the explanations below are. Click "Next" for the first piece of information.',
-        2: 'Given the above scenario, rate how <b>plausible</b> you find the statements below, then click "Next"',
-        3: 'Given the above scenario, rate how <b>plausible</b> you find the statements below, then click "Next"'
+        1: 'You will shortly be shown more information'+nameString+' in the box above. You will have to use the scenario to decide how <b>plausible</b> the explanations below are. Click "Next" for the first piece of information.',
+        2: 'Given this new information'+nameString+' above, rate how <b>plausible</b> you find the statements below now, then click "Next"',
+        3: 'Given this new information'+nameString+' above, rate how <b>plausible</b> you find the statements below now, then click "Next"'
       };
 
     }
+
 
     function shuffle(unshuffled){
       // shuffle an array

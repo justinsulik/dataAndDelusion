@@ -100,7 +100,7 @@
       pickUrn: false,
       graded: false,
       training: true,
-      firstColor: [20, 20, 20],
+      firstColor: [10, 10, 10],
       colorRatio: 0.7
     };
 
@@ -294,7 +294,8 @@
       "As another example, if you were given the statements 'Chris is an astronaut' and 'Chris is a teacher', you should rate the second more probable because there are lots more teachers than astronauts.",
       "After you've rated how probable the statements are, we will start giving you extra information, piece by piece, about the same people. This extra information may make you want to change your previous probability ratings.",
       "For example, if we told you that Harriet can't afford to go on vacation, it makes it even less probable that she has a million dollars. If we told you that she just bought another jet, it makes it more probable that she has a million dollars.",
-      "Ultimately, it may turn out that <b>none</b> of the statements is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. The task begins on the next screen"],
+      "Ultimately, it may turn out that <b>none</b> of the statements is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. Thus, you may have several high ratings, or just one, or none.",
+      "The task begins on the next screen"],
       show_clickable_nav: true
     };
 
@@ -308,7 +309,8 @@
       explanations: ["Judy is a fire-fighter.",
       "Judy is a doctor.",
       "Judy is a witch.",
-      "Judy is an organ donor."]},
+      "Judy is an organ donor."],
+      character_name: "Judy"},
 
       {trial_number: 1,
       scenarios: ["Sometimes Veronica goes home in tears.",
@@ -317,7 +319,8 @@
       explanations: ["Veronica is always overly dramatic.",
       "Veronica is suffering from the side effects of her medication.",
       "Veronica likes to water the plants with her tears.",
-      "Veronica is bullied at school."]},
+      "Veronica is bullied at school."],
+      character_name: "Veronica"},
 
       {trial_number: 2,
       scenarios: ["Janet is screaming.",
@@ -326,7 +329,8 @@
       explanations: ["Someone scratched the paint on Janet's new car.",
       "Janet caught her husband cheating on her.",
       "Janet's bad singing is often mistaken for screaming.",
-      "Janet's children are being taken away by Social Services."]},
+      "Janet's children are being taken away by Social Services."],
+      character_name: "Janet"},
 
       {trial_number: 3,
       scenarios: ["Luke spends lots of time driving.",
@@ -335,7 +339,8 @@
       explanations: ["Luke is a taxi driver.",
       "Luke is an ambulance driver.",
       "Luke is a fisherman.",
-      "Luke delivers pizza."]},
+      "Luke delivers pizza."],
+      character_name: "Luke"},
 
       {trial_number: 4,
       scenarios: ["Tiffany watches her diet.",
@@ -344,16 +349,18 @@
       explanations: ["Tiffany is a fitness instructor.",
       "Tiffany has an eating disorder.",
       "Tiffany does not know how to cook eggs.",
-      "Tiffany is diabetic."]},
+      "Tiffany is diabetic."],
+      character_name: "Tiffany"},
 
       {trial_number: 5,
-      scenarios: ["The woman has been in severe pain all day.",
-      "The woman is impatiently waiting for her special day to come.",
-      "The woman has a big belly."],
-      explanations: ["The woman is training to be a champion gymnast.",
-      "The woman has only days left to live.",
-      "The woman loves to be tickled.",
-      "The woman is about to have a baby."]},
+      scenarios: ["Jenny can't fall asleep.",
+      "Jenny can't wait until it's finally morning.",
+      "Jenny wonders how many presents she will find under the tree."],
+      explanations: ["Jenny is nervous about her exam the next day.",
+      "Jenny is worried about her ill mother.",
+      "Jenny loves her bed.",
+      "Jenny is excited about Christmas morning."],
+      character_name: "Jenny"},
 
       {trial_number: 6,
       scenarios: ["Amanda is very thin.",
@@ -362,7 +369,8 @@
       explanations: ["Amanda is a runway model.",
       "Amanda has an eating disorder.",
       "Amanda has lost her fake teeth.",
-      "Amanda is homeless."]},
+      "Amanda is homeless."],
+      character_name: "Amanda"},
 
       {trial_number: 7,
       scenarios: ["Michael's job is to entertain people.",
@@ -371,7 +379,8 @@
       explanations: ["Michael is a famous magician.",
       "Michael the clown entertains sick children in the hospital.",
       "Michael is a poker player.",
-      "Michael's job is to write novels."]},
+      "Michael's job is to write novels."],
+      character_name: "Michael"},
 
       {trial_number: 8,
       scenarios: ["Nicholas is driving his car very fast.",
@@ -380,25 +389,28 @@
       explanations: ["Nicholas is running late for work.",
       "Nicholas' wife is in labour.",
       "Nicholas hates going for walks.",
-      "Nicholas is a hit and run offender."]},
+      "Nicholas is a hit and run offender."],
+      character_name: "Nicholas"},
 
       {trial_number: 9,
-      scenarios: ["Natasha doesn't know that she's talking to her mother.",
-      "Natasha is confused and disoriented.",
-      "Natasha did not wear her helmet when she went biking."],
-      explanations: ["Natasha is at a Halloween costume party.",
-      "Natasha was just told that she was adopted as a child.",
-      "Natasha is very shy.",
-      "Natasha has lost her memory after being hit by a car."]},
+      scenarios: ["Andrea has made some new friends.",
+      "Andrea's new friends control every single aspect of her life.",
+      "Andrea has very suddenly cut off all contact with her family."],
+      explanations: ["Andrea has just started going to university.",
+      "Andrea is a kind and caring person.",
+      "Andrea loves to be photographed.",
+      "Andrea has joined a cult."],
+      character_name: "Andrea"},
 
       {trial_number: 10,
-      scenarios: ["The picnic came to an abrupt end.",
-      "Everyone went home stunned from the picnic's outcome.",
-      "By the time the ambulance arrived it was too late."],
-      explanations: ["It started to rain unexpectedly.",
-      "The families began to argue with one another.",
-      "The volcano began to erupt.",
-      "Audrey died from an allergic reaction to a bee sting."]},
+      scenarios: ["Stella answers the phone at work.",
+      "Stella is a powerful woman.",
+      "Stella went to law school."],
+      explanations: ["Stella is a secretary.",
+      "Stella is a 911 phone call operator.",
+      "Stella is a baby-sitter.",
+      "Stella is a lawyer."],
+      character_name: "Stella"},
 
       {trial_number: 11,
       scenarios: ["People often dread visiting John.",
@@ -407,25 +419,28 @@
       explanations: ["John always tells his guests long and boring stories.",
       "John is in the hospital.",
       "John is a famous hockey player.",
-      "John is a dentist."]},
+      "John is a dentist."],
+      character_name: "John"},
 
       {trial_number: 12,
-      scenarios: ["Cindy is dancing.",
-      "Cindy is wearing a small dress.",
-      "The men clap and whistle when Cindy dances."],
-      explanations: ["Cindy is at a party.",
-      "Cindy is high on drugs at a rave.",
-      "Cindy is a member of a famous pop-music group.",
-      "Cindy is a stripper."]},
+      scenarios: ["Jason is a successful business man.",
+      "Jason's clients are mainly young people.",
+      "Jason never gets caught by the police."],
+      explanations: ["Jason is a bank manager.",
+      "Jason is an owner of a rehabilitation center.",
+      "Jason is a pimp.",
+      "Jason is a drug dealer."],
+      character_name: "Jason"},
 
       {trial_number: 13,
-      scenarios: ["Stan is on his knees.",
-      "Stan is crying.",
-      "Stan's wife has packed her bags."],
-      explanations: ["Stan is praying.",
-      "Stan is about to propose to his fianc&#xE9;e.",
-      "Stan wishes he was a magic dwarf.",
-      "Stan can't find his glasses."]},
+      scenarios: ["Emily stays home for the night.",
+      "Emily feels that men are unreliable. ",
+      "Emily has been waiting for her date to arrive for hours."],
+      explanations: ["Emily has been grounded.",
+      "Emily has an infection.",
+      "Emily's date's car has broken down.",
+      "Emily has been stood up by her date."],
+      character_name: "Emily"},
 
       {trial_number: 14,
       scenarios: ["Gary is responsible for many lives.",
@@ -434,7 +449,8 @@
       explanations: ["Gary is an army general.",
       "Gary is a surgeon.",
       "Gary is a clown.",
-      "Gary is a sports-cast announcer."]},
+      "Gary is a sports-cast announcer."],
+      character_name: "Gary"},
 
       {trial_number: 15,
       scenarios: ["Eric often carries binoculars with him.",
@@ -443,16 +459,18 @@
       explanations: ["Eric is a bird expert.",
       "Eric is a stalker.",
       "Eric is an astronaut.",
-      "Eric is a tennis player."]},
+      "Eric is a tennis player."],
+      character_name: "Eric"},
 
       {trial_number: 16,
       scenarios: ["Susan can hardly speak or think.",
       "Susan made a bad decision in her past.",
-      "Set all response sliders to zero."],
+      "To show you're reading this, set all response sliders to the minimum."],
       explanations: ["Susan is very drunk.",
       "Susan is mentally handicapped.",
       "Susan has been kidnapped.",
-      "Susan does not like doing much."]}
+      "Susan does not like doing much."],
+      character_name: "Susan"}
     ];
 
     var bade = {
@@ -470,6 +488,7 @@
         scenarios: jsPsych.timelineVariable('scenarios'),
         explanations: jsPsych.timelineVariable('explanations'),
         trial_number: jsPsych.timelineVariable('trial_number'),
+        character_name: jsPsych.timelineVariable('character_name'),
       }],
       timeline_variables: badeTrials,
       randomize_order: true,
@@ -505,7 +524,7 @@
 
     var pdi = {
       type: 'pdi',
-      followUp: true
+      followUp: true,
     };
 
     timeline.push(pdi);
@@ -523,11 +542,11 @@
     timeline.push(crt_instructions);
 
     var crt_questions = [
-    {qNo: 0, question: "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
-    unit: "cents"},
-    {qNo: 1, question: "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?",
-    unit: "minutes"},
-    {qNo: 2, question: "In a lake, there is a patch of lily pads. Every day, the patch doubles in size. If it takes 48 days for the patch to cover the entire lake, how long would it take for the patch to cover half of the lake?",
+    {qNo: 0, question: "The ages of Mark and Adam add up to 28. Mark is 20 years older than Adam. How old is Adam?",
+    unit: "years old"},
+    {qNo: 1, question: "If it takes 10 seconds for 10 printers to print out 10 pages of paper, how many seconds will it take 50 printers to print out 50 pages of paper?",
+    unit: "seconds"},
+    {qNo: 2, question: "On a loaf of bread, there is a patch of mold. Every day, the patch doubles in size. If it takes 40 days for the patch to cover the entire loaf of bread, how many days would it take for the patch to cover half the loaf of bread?",
     unit: "days"},
     {qNo: 3, question: "If you're running a race and you pass the person in second place, what place are you in?",
     unit: "place"},
@@ -536,7 +555,7 @@
     {qNo: 5, question: "Emily's father has three daughters. The first two are named April and May. What is the third daughter's name?"},
     {qNo: 6, question: "How many cubic feet of dirt are there in a hole that is 3' deep x 3' wide x 3' long?",
     unit: "cubic feet"},
-    {qNo: 7, question: "How many days are there in a week? Enter double the actual number",
+    {qNo: 7, question: "How many days are there in a week? To show you're reading this, enter double the actual number",
     unit: "days"}
     ];
 

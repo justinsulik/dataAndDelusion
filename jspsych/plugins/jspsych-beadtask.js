@@ -264,7 +264,8 @@ Objects for transitioning between trial stages
             case 'pick':
 
               if( ! trial.pickUrn ){
-                if( Math.random() < 0.5 ){
+
+                if( trial.urnChoice < 1 ){
                   urn2.startFade = true;
                   beadStart = drawPosition(urn1);
                 } else {
@@ -488,7 +489,7 @@ Objects for transitioning between trial stages
           if( trial.incentive.cost > 0){
             return 'Would you like to see any more beads or have you decided which urn this is? If you decide and get it right, your bonus would be <b>$' + currentBonus + '</b>. If you would like to see another bead before deciding, your potential bonus decreases by $' + trial.incentive.cost;
           } else {
-            return 'Would you like to see any more beads or have you decided which urn this is?';
+              return 'Would you like to see any more beads or have you decided which urn this is?';
           }
         },
         onClick: function(e){
@@ -658,10 +659,10 @@ Objects for transitioning between trial stages
 
     };
 
-    var instructionsTraining = ['In this task, we will color some beads with <b>two different colors</b>, and then drop the beads into <b>two separate urns</b>.',
-                     'For example, one urn might have <b>mostly</b> white beads and the other <b>mostly</b> black beads (in opposite ratios). Each urn will have <b>some</b> beads of the opposite color.',
+    var instructionsTraining = ["In this task, we will color some beads black and some beads white. We'll drop beads of both colors into <b>two separate urns</b>.",
+                     'One urn will be majority black and the other will be majority white, though each urn will have <b>some</b> beads of each color.',
                      'The beads are shuffled and then dropped in the urns.',
-                     'Next, we will shuffle the urns <b>thoroughly</b> so you will initially have <b>no idea</b> which of these urns is majority black and which is majority white.',
+                     'Next, we will shuffle the urns <b>thoroughly</b> so you will initially have <b>no idea</b> which of these urns contains mostly black beads and which contains mostly white.',
                      "Then we will pick one of these urns. You initially have no idea which it is. Then we will start drawing beads from whichever urn gets picked."];
 
     var instructionsTrial = ['Click to color the beads in the ratio ' + Math.round(trial.colorRatio*100) + ':' + Math.round((1-trial.colorRatio)*100),
@@ -758,9 +759,9 @@ Trial variables
     var confidenceInstructions = function(){
       if(firstRating) {
         return "How likely do you think it is that either of these is the <b>majority color</b> in this <b>urn</b>? "+
-               "In the middle means you are completely unsure - you think there's a 50:50 chance that either color could be in the majority. " +
+               "In the middle means you are completely unsure - you think there's a 50:50 chance it could be either color. " +
                "Clicking on either extreme means there's a 100% chance <b>that</b> color is the majority. Click along the bar to make your rating, then drag to adjust. "+
-               "When you're ready to proceed, click Next.";
+               "When you're ready to submit your rating, click Next.";
       } else {
         return "Please rate how likely it is that either of these is the <b>majority color</b> in this <b>urn</b>.";
       }
