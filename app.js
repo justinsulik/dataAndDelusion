@@ -76,7 +76,7 @@ app.get('/', (req, res) => {
 
     // check from US
     if (geo) {
-      if (geo.country != 'US'){
+      if (geo.country != 'US' && geo.country != 'GB'){
         proceed = 'wrongCountry';
       }
     }
