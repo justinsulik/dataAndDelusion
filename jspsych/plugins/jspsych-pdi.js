@@ -40,6 +40,12 @@ jsPsych.plugins["pdi"] = (function() {
         default: true,
         pretty_name: 'Attention check',
         description: 'If true, include an attention check question'
+      },
+      includeCAPE: {
+        type: jsPsych.plugins.parameterType.BOOL,
+        default: false,
+        pretty_name: 'Include CAPE',
+        description: 'If true, include questions from the CAPE instrument'
       }
     }
   };
@@ -156,6 +162,15 @@ trial variables and functions
     }
     if( trial.attentionCheck ){
       questions = questions.concat(['Have you ever seen a purple unicorn? Respond yes and set all the sliders to maximum value.']);
+    }
+    if (trial.includeCAPE ){
+      questions = questions.concat(['Do you ever feel as if the thoughts in your head are being taken away from you?',
+      'Do you ever feel as if the thoughts in your head are not your own?',
+      'Do you ever feel as if you are under the control of some force or power other than yourself?',
+      'Do you ever hear voices when you are alone?',
+      'Do you ever hear voices talking to each other when you are alone?',
+      'Do you ever feel as if a double has taken the place of a family member, friend or acquaintance?',
+      'Do you ever see objects, people or animals that other people cannot see?']);
     }
 
     var saveResponses = function(){
@@ -510,6 +525,7 @@ Inputs
 
     $("#buttonContainer").on("click", "button", function(e){
 
+      $('#buttonContent').html('');
       $('#furtherInstructions').html('');
       sliderChecker = [0, 0, 0];
       displayed = false;

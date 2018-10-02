@@ -1,7 +1,8 @@
 <form id="biography" style="text-align:left">
+  Finally, some questions about you and your experience in this study.
   <div id="age">
     <p><b>Age:</b></p>
-      <input type="text" name="ageRadio">
+      <input type="text" name="ageText">
   </div>
   <div id="gender">
     <p><b>Gender:</b></p>
@@ -12,31 +13,28 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="other_text">
   </div>
   <div id="education">
-    <p><b>Highest level of education:</b></p>
-    <input type="radio" name="educationRadio" value="1"> Some high school (no diploma)<br>
-    <input type="radio" name="educationRadio" value="2"> High school<br>
-    <input type="radio" name="educationRadio" value="3"> Technical/trade/vocational training<br>
-    <input type="radio" name="educationRadio" value="4"> Some college (no degree/Associate's degree)<br>
-    <input type="radio" name="educationRadio" value="5"> Batchelor's degree<br>
-    <input type="radio" name="educationRadio" value="6"> Master's degree<br>
-    <input type="radio" name="educationRadio" value="7"> Professional degree<br>
-    <input type="radio" name="educationRadio" value="8"> Doctoral degree<br>
+    <p><b>Highest completed education level:</b></p>
+    <input type="radio" name="eduRadio" value="0"> Some high school<br>
+    <input type="radio" name="eduRadio" value="1"> High school diploma<br>
+    <input type="radio" name="eduRadio" value="2"> 2-year degree or diploma<br>
+    <input type="radio" name="eduRadio" value="3"> Bachelors degree or equivalent<br>
+    <input type="radio" name="eduRadio" value="4"> Masters degree or equivalent<br>
+    <input type="radio" name="eduRadio" value="5"> Doctorate or equivalent<br>
   </div>
-  <div>
-    <br><br>
-    Please answer the following honestly - none of these answers will affect your payment in any way. 
+  <div id="religion">
+    <p>How strongly do you <b>believe in God or gods</b> (from 0-100)?<br>To clarify, if you are certain that God (or gods) does not exist, please put "0".<br>If you are certain that God (or gods) does exist, then put "100".</p>
+    <input type="text" name="religionText">
   </div>
   <div id="language">
     <p>Are you a <b>native speaker</b> of English?</p>
     <input type="radio" name="languageRadio" value="0"> No<br>
     <input type="radio" name="languageRadio" value="1"> Yes<br>
   </div>
-  <div id="google">
-    <p>Did you google the answer to any of the questions here?</p>
-    <input type="radio" name="googleRadio" value="0"> No<br>
-    <input type="radio" name="googleRadio" value="1"> Yes<br>
+  <div id="comments">
+    <p>Any other comments for us? (leave blank if none)</p>
+    <textarea name="comment_text" rows="5" cols="90"></textarea>
   </div>
   <div>
-    <br><button type="button" id='submitButton'>Submit</button>
+    <br><button type="button" id='submit'>Submit</button>
   </div>
 </form>

@@ -1,58 +1,11 @@
-<!doctype HTML>
-    <head>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <link href="jsPsych/css/jspsych.css" type="text/css" rel="stylesheet"/>
-        <link href="./css/survey.css" type="text/css" rel="stylesheet"/>
-    </head>
-    <body>
 
-        <div class = "parent">
-            <div class = "child">
-                <div id="jspsych_target">
-                    <h1>Welcome to our experiment.</h1>
-                    <p>
-                      In this experiment you will perform four tasks. They involve making decisions about probability, a survey about your experiences, and some math problems.
-                      More detailed instructions will be provided if you decide to continue.
-                    </p>
-                    <p>
-                      The content pane of your browser window needs to be at least 800x600 pixels for you to take part.
-                    </p>
-                    <p>
-                      We check how well you understand the instructions and the experiment.
-                    </p>
-                    <p>
-                      The results of this research will only be used for scientific purposes.
-                      The results may be presented at conferences and may be published in scientific journals.
-                      The results may also be published in newspapers, promotional material used by the university, or <a href="https://www.royalholloway.ac.uk/psychology/home.aspx" target='_blank'>on the website of the university department</a>.
-                      Finally, the data may be made available publically via the <a href='https://osf.io/' target='_blank'>Open Science Framework</a>.
-                    </p>
-                    <p>
-                      The data will never be shown in such a way that you could be personally identified, so it will include a randomly generated code instead of your Turk ID.
-                      No personal information will ever be shared or linked to the data that you provide.
-                      You may withdraw your data at any time prior to publication. If you wish to withdraw your data, please email us with either your Turk ID or the completion code you'll get at the end of the experiment.
-                      If you take part in more than one of our surveys, we may combine data across surveys, though we will do so using an anonymous key so the data will not be linked to your Turk ID.
-                      If you are dissatisfied with any of these terms, please contact us via email (<a href='mailto:justin.sulik@rhul.ac.uk' target = '_top'>justin.sulik@rhul.ac.uk</a>).</p>
-                    </p>
-                    <p>
-                      Participation in this experiment is voluntary. To collect your full payment, you will need to enter a completion code, which you will receive after the completion of the experiment.
-                      Although you are free to withdraw your participation at any time, if you do not complete the experiment after consenting, you will not receive a completion code and will be unable to claim your payment.
-                    </p>
-                    <button type='button' id='consentButton'>Click here to consent and proceed to the experiment!</button>
-                </div>
-            </div>
-        </div>
-    </body>
-<script>
-var testString = JSON.stringify('<%- taskId %>');
-var test;
-if( testString.length > 0 ){
-  test = JSON.parse(testString);
-} else {
-  test = 'aOb7y';
-}
-
-$('#consentButton').click(function(){
-  window.location.href = "experiment?test="+test;
-})
-</script>
-</html>
+<div id="consent" style="width:600px;font-size:16px;margin-top:30px;text-align:left">
+<p>The HIT you are about to do is an experiment by researchers at Royal Holloway, University of London.  You will have to make decisions about a range of problems and answer some questions about yourself. More detailed HIT instructions will be provided on the next screen.</p>
+<p>There are comprehension checks to make sure you understand the instructions. You cannot proceed with the experiment until you pass the comprehension checks.</p>
+<p>Do not take this HIT on a mobile device (e.g., cell phone or tablet), and do not take it with Internet Explorer.
+<p>If you have any questions or concerns about this HIT please contact the principal investigator: Dr Ryan McKay (ryan.mckay@rhul.ac.uk)</p>
+<p>If you are not satisfied with the response of the research team or want to talk with someone about your rights as a research participant, you should contact Royal Holloway's research ethics board at ethics@rhul.ac.uk</p>
+<p>You are free to decline to participate or to end participation at any time for any reason.</p>
+<p>By clicking below, you consent to participate in this task.  If you do not wish to continue, please simply close this window and return the HIT.</p>
+<button type="button" id='consent'>I consent to take part in this experiment</button>
+</div>

@@ -1,15 +1,11 @@
-// save data after each block
-// check screen size
-// update farewell screen address
-//
 
 
 // --- LOADING MODULES
 const express = require('express'),
-    url = require('url');
+    url = require('url'),
     body_parser = require('body-parser'),
-    Vue = require('vue'),
-    renderer = require('vue-server-renderer').createRenderer(),
+    detect = require('browser-detect'),
+    geoip = require('geoip-lite'),
     session = require('express-session'),
     db = require('./model/db'),
     tasks = require('./controllers/tasks'),
@@ -34,7 +30,7 @@ db.connect(process.env.MONGODB_URI);
 // --- STATIC MIDDLEWARE
 app.use(express.static(__dirname + '/public'));
 app.use('/jspsych', express.static(__dirname + "/jspsych"));
-app.use('/p5', express.static(__dirname + "/p5"));
+app.use('/libraries', express.static(__dirname + "/libraries"));
 
 // --- BODY PARSING MIDDLEWARE
 app.use(body_parser.json()); // to support JSON-encoded bodies
@@ -50,29 +46,61 @@ app.get('/', (req, res) => {
     const workerId = req.query.workerId || '';
     const assignmentId = req.query.assignmentId || '';
     const hitId = req.query.hitId || '';
-    const completionCode = makeCode(2)+'3'+makeCode(5)+'iTi'+makeCode(4)+'w'+makeCode(2);
-    const taskId = makeCode(2)+'5'+makeCode(5)+'nMn'+makeCode(4)+'z'+makeCode(2);
+    const trialId = makeCode(2)+'5'+makeCode(5)+'nMn'+makeCode(4)+'z'+makeCode(2);
+    const browser = detect(req.headers['user-agent']);
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || (req.connection.socket ? req.connection.socket.remoteAddress : null);
+    let geo = {};
+    if(ip){
+      geo = geoip.lookup(ip);
+    }
     tasks.save({
         "workerId": workerId,
         "hitId": hitId,
         "assignmentId": assignmentId,
-        "completionCode": completionCode,
         "sessionId": sessId,
         "studyName": studyName,
-        "taskId": taskId
+        "trialId": trialId,
+        "ip": ip,
+        "geo": geo,
+        "browser": browser
     });
-    res.render('consent.html', {taskId: taskId});
-});
 
-app.get('/experiment', (req, res) => {
-    var taskId = req.query.test;
-    if( taskId.length > 0 ){
-        res.render('experiment.html', {taskId: taskId});
-    } else {
-        res.render('experiment.html');
+    let proceed = 'proceed';
+
+    // check browser compatibility
+    if (browser) {
+      if (browser.mobile==true || browser.name=="IE") {
+        proceed = 'browserIssue';
+      }
+    }
+
+    // check from US
+    if (geo) {
+      if (geo.country != 'US'){
+        proceed = 'wrongCountry';
+      }
+    }
+
+    switch (proceed) {
+      case 'browserIssue':
+        res.send('You seem to be viewing this either on a mobile device or with Internet Explorer. ' +
+        'The instructions explicitly forbade those. Please just return the HIT. ' +
+        'Do not just try reload this HIT with another browser. (Error: mt0)');
+        break;
+
+      case 'wrongCountry':
+        res.send('It seems you have already completed a similar task for us before so you will not be able to complete this one. ' +
+        'Please just return the HIT. Sorry for the inconvenience. (Error: mt3)');
+        break;
+
+      case 'proceed':
+        console.log('Rendering survey...');
+        res.render('experiment.ejs', {trialId: JSON.stringify(trialId)});
+        break;
     }
 
 });
+
 
 app.get('/x4d89', (req, res) => {
   const sessId = req.session.id;
@@ -112,21 +140,33 @@ app.get('/x4d89', (req, res) => {
 
 // --- SAVE TRIAL DATA
 
-app.post('/experiment-data', function(req, res){
-  const trialId = req.query.trialId || 'none';
-  console.log(trialId)
-  const sessId = req.session.id;
+
+app.get('/TyNFQbzAlF', (req, res) => {
+  let code = req.query.gvmejG;
+  if(code.length>=0){
+    code = code +'5'+makeCode(3) + 's';
+  } else {
+    code = makeCode(10) + 'E3E';
+  }
+  res.render('finish.ejs', {completionCode: code});
+});
+
+// --- SAVE TRIAL DATA
+
+app.post('/Vn3OGu8kcy', (req, res) => {
+
   const data = req.body;
-  console.log('Preparing to save trial data...', sessId);
+  const sessionId = req.session.id;
+  const trialId = req.query.trialId || 'none';
+  console.log(trialId, 'Preparing to save trial data...');
+
   responses.save({
-      "sessionId": sessId,
-      "trialData": data,
-      "trialId": trialId,
-      "studyName": studyName,
-  });
-  res.send(200);
-  res.end();
-  console.log('Data saved...')
+      sessionId: sessionId,
+      trialData: data,
+      trialId: trialId,
+      studyName: studyName,
+  })
+  .then(res.status(200).end());
 });
 
 

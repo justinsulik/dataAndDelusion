@@ -4,8 +4,9 @@
 <html>
     <head>
         <title>Experiment</title>
-        <script language="javascript" src="p5/p5.min.js"></script>
-        <script type="text/javascript" src="p5/addons/p5.dom.js"></script>
+        <script language="javascript" src="libraries/p5.min.js"></script>
+        <script language="javascript" src="libraries/p5.dom.js"></script>
+        <script language="javascript" src="libraries/lodash.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script language="javascript" src="jspsych/jspsych.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-instructions.js"></script>
@@ -22,42 +23,31 @@
     </body>
     <script>
 
+    var trialId = <%- trialId %>
 
-    function shuffle(unshuffled){
-      // shuffle an array
-      var shuffled = [];
-      var N = unshuffled.length;
-      for( var i = 0; i < N; i++ ){
-        var index = Math.floor(Math.random() * (unshuffled.length));
-        var newValue = unshuffled[index];
-        shuffled.push(newValue);
-        unshuffled.splice(index, 1);
-      }
-      return shuffled;
-    };
+    jsPsych.data.addProperties({trialId: trialId});
 
-    function makeCode(len){
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwxy0123456789";
-        for( var i=0; i < len; i++ ){
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
-    };
-
-    var testString = JSON.stringify('<%- taskId %>');
-    if( testString.length > 0 ){
-      test = JSON.parse(testString);
-    } else {
-      test = 'aOb7y';
-    }
-
-    jsPsych.data.addProperties({taskId: test});
-
+    var cmpltnCd = makeCode(3)+'RtR' + makeCode(5) + '4z4'
+    jsPsych.data.addProperties({cmpltnCd: cmpltnCd});
 
     var timeline = [];
     var beadTimeline = [];
     var badeTimeline = [];
+    var startTime;
+    var score = 0;
+    var comprehensionRounds = [];
+
+    // consent
+
+    var consent = {
+      type: 'external-html',
+      url: '../views/consent.html',
+      check_fn: function(){
+        startTime = (new Date()).getTime();
+        return true;
+      },
+      cont_btn: 'consent'
+    }
 
     // Initial instructions
 
@@ -68,86 +58,46 @@
       "Then you will answer some questions about your experiences and perceptions.",
       "Finally, you will solve a few straightforward math problems.",
       "After completing all tasks, we'll ask for some biographical information",
-      "Please do not google ANY of the answers. We are interested in your honest responses.",
+      "Please do not google any of the answers. We are interested in your honest responses.",
       "The first task is introduced on the next screen."],
       show_clickable_nav: true
     };
 
-    timeline.push(mainInstructions);
-
     // Bead task
 
-    var colors = shuffle([[0, 102, 153], [0, 153, 255], [51, 51, 255], [153, 153, 255], [255, 0, 255], [255, 153, 153]]);
-
-    var ratios1 = shuffle([0.6, 0.70, 0.85]);
-    var ratios2 = shuffle([0.6, 0.70, 0.85]);
-
-
-    function flipdraws(draws){
-      // Randomly flip a list of draws, so that the majority color could 0s or 1s
-      // For the inputs below, it's always 0s
-      var flip = Math.random();
-      var out = [];
-      if( flip < 0.5){
-        draws.forEach(function(e){
-          out.push(Math.abs(e-1));
-        });
-        return out;
-      } else {
-        return draws;
-      }
-
-    }
-
-    var draws1 = {0.6: flipdraws([0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0]),
-                  0.7: flipdraws([0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0]),
-                  0.85: flipdraws([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0])};
-    var draws2 = {0.6:  flipdraws([0, 0, 1, 0, 0, 1, 0, 0, 1, 0]),
-                  0.7:  flipdraws([0, 0, 0, 1, 0, 0, 1, 0, 0, 1]),
-                  0.85: flipdraws([0, 0, 0, 0, 1, 0, 0, 0, 0, 1])};
-
-
-
-    var beadInstructions = {
+    // instructions
+    var startInstructions = {
       type: 'instructions',
-      pages: ["In this task, we are going to draw colored beads out of an urn until you reach a decision about the color of the majority of beads in the urn.",
+      pages: ["We are going to do a task that involves drawing colored beads out of an urn until you're confident what the majority color in that urn is.",
               "We will begin with some detailed instructions, accompanied by a visual illustration of the bead task.",
               "After we've gone through the instructions, your understanding of the task will be tested.",
-              "You need to get <b>all</b> the comprehension questions right before you will can proceed to the actual task.",
+              "You need to get <b>all</b> the comprehension questions right before you can proceed to the actual task.",
               "If you get <b>any</b> wrong, we'll go through the instructions and test your understanding again, until you get all the test questions right.",
-              "About 50% of participants get them all right on the first attempt, so it's in your best interest to read the instructions carefully and think about them, to avoid having to go over them again. The instructions start on the next page."],
+              "About 50% of participants fail to get them all right on the first attempt, so if you pay careful attention, you can avoid wasting time.",
+              "Now, we will start going through the instructions."],
       show_clickable_nav: true
     };
 
-    beadTimeline.push(beadInstructions);
-
+    // practice trial
     var trainingTrial = {
       type: 'beadtask',
-      pickUrn: false,
-      graded: false,
       training: true,
-      firstColor: [10, 10, 10],
-      colorRatio: 0.7
+      firstColor: [0, 0, 0],
+      colorRatio: 0.8
     };
 
-    var ifComprehensionInstructions = {
-      timeline: [{
-        type: 'instructions',
-        pages: ["Before beginning the task, we are going to check whether you've understood the previous instructions by asking some True/False questions.",
-                "You will not be able to proceed with the experiment until all of these comprehension questions are answered correctly.",
-                "If you get any of these wrong, the previous instructions will be replayed so that you can check what the right answers are."],
-        show_clickable_nav: true
-      }],
-      conditional_function: function(){
-        if(Object.keys(comprehensionData).length==0){
-          return true;
-        } else {
-          return false;
-        }
-      }
+    // elements needed for comprehension check, and for looping back through the instructions if participant fails the comprehension check
+
+    var comprehensionInstructions = {
+      type: 'instructions',
+      pages: ["Next we are going to check whether you've understood the previous instructions by asking some True/False questions.",
+              "You will not be able to proceed with the experiment until all of these comprehension questions are answered correctly.",
+              "If you get any of these wrong, the previous instructions will be replayed so that you can check what the right answers are."],
+      show_clickable_nav: true
     };
 
     var comprehensionOptions= ['True', 'False'];
+    var correctAnswers = {"Q0": "True", "Q1" : "False", "Q2" : "False", "Q3" : "True", "Q4" : "True"};
 
     var comprehension1 = {
       type: 'survey-multi-choice',
@@ -164,78 +114,74 @@
           options: comprehensionOptions,
           horizontal: true
         },
-        {prompt: 'The ratio of colors in one urn is just the opposite of the ratio of colors in the other urn',
+        {prompt: 'It’s up to me to decide when I’ve seen enough beads',
           options: comprehensionOptions,
           horizontal: true
         },
-        {prompt: 'Beads are placed back in the urn after each draw',
+        {prompt: 'Beads are drawn at random from the urn',
           options: comprehensionOptions,
           horizontal: true
         }
-      ]
+      ],
+      on_finish: function(data){
+        // score the responses
+        var responses = JSON.parse(data.responses);
+        var comprehensionTracker = [0, 0, 0, 0, 0];
+        var questionCounter = 0;
+        score = _.reduce(responses, (tally, response, questionNumber)=>{
+           if (response == correctAnswers[questionNumber]) {
+             comprehensionTracker[questionCounter] = 1
+             tally += 1
+           }
+           questionCounter+=1
+           return tally
+        }, 0)
+        comprehensionRounds.push(comprehensionTracker);
+      }
     };
 
-    var score = 0;
-    var failMessage = {
+    var feedback1 = {
       type: 'instructions',
       pages: function(){
-        return ['You got ' + score + '/5 correct. We will go through the demonstration again.'];
+        if (score < 5){
+          return ['You got ' + score + '/5 correct. We will go through the instructions and demonstration again.'];
+        } else {
+          return ["You got them all right! We're going to repeat the task 6 times, each with a different set of urns (different bead colors, different ratios of colors, etc.)."];
+        }
       },
       show_clickable_nav: true
     };
 
-    var ifFail = {
-      timeline: [failMessage],
-      conditional_function: function(){
-        if(Object.keys(comprehensionData).length>0){
-          return true;
-        } else {
-          return false;
-        }
-      }
-    };
-
-    var comprehensionData = {};
+    // node for looping through instructions until score is 5 (out of 5 questions)
 
     var loop_node = {
-      timeline: [ifFail, trainingTrial, ifComprehensionInstructions, comprehension1],
+      timeline: [startInstructions, trainingTrial, comprehensionInstructions, comprehension1, feedback1],
       loop_function: function(data){
-          var currentAttempt = Object.keys(comprehensionData).length;
-          comprehensionData[currentAttempt] = [];
-          var correct = {"Q0": "True", "Q1" : "False", "Q2" : "False", "Q3" : "True", "Q4" : "True"};
-          score = 0;
-          var responses = JSON.parse(data.values()[data.values().length-1].responses);
-          for (var question in responses) {
-            if( responses[question] == correct[question] ){
-              score+=1;
-              comprehensionData[currentAttempt].push(1);
-            } else {
-              comprehensionData[currentAttempt].push(0);
-            }
-
-          }
-          if( score == Object.keys(correct).length ){
-            jsPsych.data.get().addToLast({comprehensionData: comprehensionData});
-            return false;
-          } else {
-            failMessage.pages[0] = 'You got ' + score + '/5 correct. We will go through the demonstration again. The relevant information is highlighted for you.'
-            return true;
-          }
+        if (score==5){
+          return false;
+        } else {
+          return true;
+        }
       }
     };
 
     beadTimeline.push(loop_node);
 
+    // trial data
 
-    var instructionsStart = {
-      type: 'instructions',
-      pages: ["You got them all right! It's time to begin the task.",
-      "Remember, once we've randomly picked one of the urns, all beads will be drawn just from that one urn.",
-      "Beads will be drawn and then replaced in the urn, so the number of beads and proportion of colors will remain the same throughout the trial."],
-      show_clickable_nav: true
-    }
+    var colors = shuffle([[0, 102, 153], [0, 153, 255], [51, 51, 255], [153, 153, 255], [255, 0, 255], [255, 153, 153]]);
 
-    beadTimeline.push(instructionsStart);
+    var ratios1 = shuffle([0.6, 0.70, 0.85]);
+    var ratios2 = shuffle([0.6, 0.70, 0.85]);
+
+    var draws1 = {0.6: flipdraws([0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0]),
+                  0.7: flipdraws([0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0]),
+                  0.85: flipdraws([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0])};
+
+    var draws2 = {0.6:  flipdraws([0, 0, 1, 0, 0, 1, 0, 0, 1, 0]),
+                  0.7:  flipdraws([0, 0, 0, 1, 0, 0, 1, 0, 0, 1]),
+                  0.85: flipdraws([0, 0, 0, 0, 1, 0, 0, 0, 0, 1])};
+
 
     var instructionsDTD = {
       type: 'instructions',
@@ -298,6 +244,7 @@
           type: 'beadtask',
           firstColor: jsPsych.timelineVariable('color'),
           colorRatio: jsPsych.timelineVariable('ratio'),
+          draws: jsPsych.timelineVariable('draws'),
           beadCount: 100,
           record: true,
           graded: true,
@@ -310,7 +257,7 @@
     };
 
 
-    if( Math.random() < 0.5 ){
+    if( Math.random() < 1 ){
         beadTimeline = beadTimeline.concat([instructionsGE, beadGE, instructionsDTD, beadDTD]);
     } else {
         beadTimeline = beadTimeline.concat([instructionsDTD, beadDTD, instructionsGE, beadGE]);
@@ -328,11 +275,44 @@
       "After you've rated how probable the statements are, we will start giving you extra information, piece by piece, about the same people. This extra information may make you want to change your previous probability ratings.",
       "For example, if we told you that Harriet can't afford to go on vacation, it makes it even less probable that she has a million dollars. If we told you that she just bought another jet, it makes it more probable that she has a million dollars.",
       "Ultimately, it may turn out that <b>none</b> of the statements is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. Thus, you may have several high ratings, or just one, or none.",
-      "The task begins on the next screen"],
+      "We will do a quick practice trial when you hit next."],
       show_clickable_nav: true
     };
 
     badeTimeline.push(badeInstructions);
+
+    var badeScaleLabels = [
+    'extremely\nimprobable',
+    'improbable',
+    'somewhat\nimprobable',
+    'as probable\nas not',
+    'somewhat\nprobable',
+    'probable\n',
+    'extremely\nprobable'];
+
+    var practiceBade = {
+      type: 'bade',
+      rating_type: 'posterior',
+      scale_labels: badeScaleLabels,
+      scenarios: ["Monica helps people find answers to their questions.",
+      "She loves to read.",
+      "At work, Monica is surrounded by books."],
+      explanations: ["Monica works in a library.",
+      "Monica is a fortune teller.",
+      "Monica works in counselling.",
+      "Monica is a tourist."],
+      character_name: "Monica"
+    }
+
+    badeTimeline.push(practiceBade);
+
+    var badeInstructions2 = {
+      type: 'instructions',
+      pages: ["That was a practice trial. Next we will do the real trials."],
+      show_clickable_nav: true
+    };
+
+    badeTimeline.push(badeInstructions2);
 
     var badeTrials = [
       {trial_number: 0,
@@ -510,14 +490,7 @@
       timeline: [{
         type: 'bade',
         rating_type: 'posterior',
-        scale_labels: [
-        'extremely\nimprobable',
-        'improbable',
-        'somewhat\nimprobable',
-        'as probable\nas not',
-        'somewhat\nprobable',
-        'probable\n',
-        'extremely\nprobable'],
+        scale_labels: badeScaleLabels,
         scenarios: jsPsych.timelineVariable('scenarios'),
         explanations: jsPsych.timelineVariable('explanations'),
         trial_number: jsPsych.timelineVariable('trial_number'),
@@ -531,17 +504,6 @@
     badeTimeline.push(bade);
 
 
-    // Randomize order of bead/bade tasks
-
-    if( Math.random() < 0.5 ){
-      timeline = timeline.concat(beadTimeline)
-      timeline = timeline.concat(badeTimeline)
-    } else {
-      timeline = timeline.concat(badeTimeline)
-      timeline = timeline.concat(beadTimeline)
-    }
-
-
     // task 3: PDI
 
     var pdiInstructions = {
@@ -553,15 +515,12 @@
       show_clickable_nav: true
     };
 
-    timeline.push(pdiInstructions);
-
     var pdi = {
       type: 'pdi',
       followUp: true,
+      attentionCheck: true,
+      includeCAPE: true
     };
-
-    timeline.push(pdi);
-
 
     // task 4: CRT
 
@@ -571,8 +530,6 @@
       pages: ["In the final task, you will solve some simple math or logic problems. They can all be worked out fairly straightforwardly. You certainly <b>don't</b> need paper and a pen/pencil for working them out. If you think you might, you're probably overthinking things.",
       "Do not answer 'I don't know' or 'no idea' or similar. Just give your best answer."]
     };
-
-    timeline.push(crt_instructions);
 
     var crt_questions = [
     {qNo: 0, question: "The ages of Mark and Adam add up to 28. Mark is 20 years older than Adam. How old is Adam?",
@@ -606,8 +563,6 @@
         timeline_variables: crt_questions,
     };
 
-    timeline.push(crtTrials);
-
     var crtNaivete = {
       type: 'survey-multi-choice',
       questions: [
@@ -620,34 +575,25 @@
       ]
     }
 
-    timeline.push(crtNaivete);
-
     // Biographic info
 
-    var bio_instructions = {
-      type: "instructions",
-      show_clickable_nav: true,
-      pages: ["You've finished all the tests! There are a few more questions about age/gender/education and then you're done."]
-    };
-
-    timeline.push(bio_instructions);
-
-    var bioData;
+    var bioData = {};
 
     function checkResponses(){
       //Check that all questions are answered, and that only numbers are used in responding to Age
-      var age = $('input[name=ageRadio]', '#biography').val();
+      var age = $('input[name=ageText]', '#biography').val();
       var gender = $('input[name=genderRadio]:checked', '#biography').val();
-      var education = $('input[name=educationRadio]:checked', '#biography').val();
+      var education = $('input[name=eduRadio]:checked', '#biography').val();
       var language = $('input[name=languageRadio]:checked', '#biography').val();
-      var google = $('input[name=googleRadio]:checked', '#biography').val();
+      var religion = $('input[name=religionText]', '#biography').val();
+      var comments = $('textarea', '#biography').val();
 
       var ageFail = true;
       var genderFail = true;
       var genderSelfDescribe = false;
-      var educationFail = true;
       var languageFail = true;
-      var googleFail = true;
+      var eduFail = true;
+      var religionFail = true;
 
       if( age > 0 ){
         ageFail = false;
@@ -672,11 +618,18 @@
         $('#gender>p').css('color', 'red');
       }
 
-      if( education > 0 ){
-        educationFail = false;
+      if (education >= 0){
+        eduFail = false;
         $('#education>p').css('color', 'black');
       } else {
         $('#education>p').css('color', 'red');
+      }
+
+      if( religion >= 0 && religion <= 100 && religion !== ''){
+        religionFail = false;
+        $('#religion>p').css('color', 'black');
+      } else {
+        $('#religion>p').css('color', 'red');
       }
 
       if( language >= 0 ){
@@ -686,17 +639,11 @@
         $('#language>p').css('color', 'red');
       }
 
-      if( google >= 0 ){
-        googleFail = false;
-        $('#google>p').css('color', 'black');
-      } else {
-        $('#google>p').css('color', 'red');
-      }
 
-      if( educationFail | genderFail | ageFail | languageFail | googleFail ){
+      if( genderFail || ageFail || languageFail || genderSelfDescribe || eduFail || religionFail ){
         var alertMessage = "Please check you've provided an answer to all questions in red.";
-        if( ageFail ){
-          alertMessage += " Check that you've only included numbers when giving your age. "
+        if( ageFail || religionFail ){
+          alertMessage += " Check that you've only included numbers when giving your age or rating religious belief. "
         }
         if( genderSelfDescribe ){
           alertMessage += " If you've chosen to self-describe your gender, please fill in a value. "
@@ -706,68 +653,131 @@
         bioData = {
           age: age,
           gender: gender,
-          education: education,
           language: language,
-          google: google
+          education: education,
+          religion: religion,
+          comments: comments
         };
         return true;
       }
 
     };
 
-    var biography = {
-      type:'external-html',
-      url: "./views/biographic.html",
-      cont_btn: 'submitButton',
-      check_fn: checkResponses
+    var biographic = {
+      type: 'external-html',
+      url: '../views/biographic.html',
+      check_fn: checkResponses,
+      cont_btn: 'submit',
     }
 
-    timeline.push(biography);
+    timeline.push(consent);
+    timeline.push(mainInstructions);
+
+    // Randomize order of bead/bade tasks
+    if( Math.random() < 0.5 ){
+      timeline = timeline.concat(beadTimeline)
+      timeline = timeline.concat(badeTimeline)
+    } else {
+      timeline = timeline.concat(badeTimeline)
+      timeline = timeline.concat(beadTimeline)
+    }
+
+    // timeline = timeline.concat(beadTimeline);
+    // timeline = timeline.concat(badeTimeline);
+
+
+    timeline.push(pdiInstructions);
+    timeline.push(pdi);
+
+    timeline.push(crt_instructions);
+    timeline.push(crtTrials);
+    timeline.push(crtNaivete);
+
+    timeline.push(biographic);
 
 
     jsPsych.init({
         default_iti: 500,
+        show_progress_bar: true,
+        preload_images: ['img/greek-urn-md.png'],
         exclusions: {
           min_width: 800,
           min_height: 600
         },
         timeline: timeline,
         on_finish: function(){
-          jsPsych.data.get().addToLast({biodata: bioData});
           save();
-
         }
     });
 
-function finish(){
-  window.location.href = "x4d89";
-}
 
 function save(){
-  var data = jsPsych.data.get();
-  var interaction_data = jsPsych.data.getInteractionData();
-  if( interaction_data.count() > 0 ){
-    data = data.join(interaction_data)
-  }
+  var endTime = (new Date()).getTime();
+  var duration = endTime-startTime;
+  var interactionData = jsPsych.data.getInteractionData().json();
+  jsPsych.data.get().addToLast({biodata: bioData,
+                                duration: duration,
+                                interactionData: interactionData,
+                                comprehension: comprehensionRounds});
 
-  data = data.json();
-  console.log(data);
+  var data = jsPsych.data.get().json();
+  console.log('    About to post survey output data...', data);
 
+  var dataUrl = '/Vn3OGu8kcy?trialId=' + trialId;
   $.ajax({
      type: 'POST',
-     url: '/experiment-data?trialId='+test,
+     url: dataUrl,
      data: data,
      contentType: "application/json",
-     success: function () {
-        console.log("Success")
-        finish();
-      },
-      error: function (e) {
-        console.log("error", e);
-        finish();
-      }
+     error: function(request, status, error){
+       console.log('    Error posting data...', request, status, error)
+     },
+     complete: finish(cmpltnCd)
    });
 }
+
+function finish(cmpltnCd){
+  cmpltnCd +=  trialId;
+  window.location.href = "/TyNFQbzAlF?gvmejG="+cmpltnCd;
+}
+
+function shuffle(unshuffled){
+  // shuffle an array
+  var shuffled = [];
+  var N = unshuffled.length;
+  for( var i = 0; i < N; i++ ){
+    var index = Math.floor(Math.random() * (unshuffled.length));
+    var newValue = unshuffled[index];
+    shuffled.push(newValue);
+    unshuffled.splice(index, 1);
+  }
+  return shuffled;
+};
+
+function makeCode(len){
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwxy0123456789";
+    for( var i=0; i < len; i++ ){
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+};
+
+function flipdraws(draws){
+  // Randomly flip a list of draws, so that the majority color could 0s or 1s
+  // For the inputs below, it's always 0s
+  var flip = Math.random();
+  var out = [];
+  if( flip < 0.5){
+    draws.forEach(function(e){
+      out.push(Math.abs(e-1));
+    });
+    return out;
+  } else {
+    return draws;
+  }
+};
+
 
     </script>
 </html>
