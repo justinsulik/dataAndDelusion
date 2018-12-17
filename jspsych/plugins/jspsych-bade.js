@@ -135,10 +135,11 @@ trial variables and functions
     }
 
 
+
     if( trial.rating_type == 'posterior'){
       instructions = {
         0: 'Read the sentences below. Click on the bars underneath each statement to rate <b>how likely</b> you think it is to be <b>true</b>, then click "Next"',
-        1: 'You will shortly be shown more information'+nameString+' in the box above. Use the extra information to decide how <b>probable</b> the statements below are. Click "Next" for the first piece of information.',
+        1: 'You will shortly be shown information'+nameString+' in the box above, that will help you decide how probable the statements below are. Click "Next" for the first piece of information.',
         2: 'Given this new information'+nameString+' above, rate how <b>probable</b> the statements below are now, then click "Next"',
         3: 'Given this new information'+nameString+' above, rate how <b>probable</b> the statements below are now, then click "Next"',
       };

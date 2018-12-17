@@ -272,7 +272,6 @@ Objects for transitioning between trial stages
                   urn1.startFade = true;
                   beadStart = drawPosition(urn2);
                 }
-
               }
 
             break;
@@ -605,7 +604,7 @@ Objects for transitioning between trial stages
           return 'end';
         },
         button: '<div id="buttonFlexContainer"><button type="button" id="advanceButton">Click to advance</button></div>',
-        instructions: "In this example, we drew just one bead, but in the actual trials, you may see more",
+        instructions: "In this example, we drew just one bead, but in the actual trials, you may see more.",
         onClick: function(e){
           trial_data = {};
           var end_time = Date.now();
@@ -1268,6 +1267,7 @@ The following actually uses a short-cut version of instance mode, as described h
         if( !trial.training ){
           sketch.fill(50);
           sketch.strokeWeight(0);
+          sketch.textSize(18);
           sketch.text('Record of previously drawn beads', this.xMargin, sketch.height-this.containerHeight-10);
           sketch.strokeWeight(1);
 
@@ -1277,6 +1277,7 @@ The following actually uses a short-cut version of instance mode, as described h
             var xPos = 10+(record.beadSize)*(i % record.xSlots);
             var yPos = (record.beadSize)*Math.floor(i / record.xSlots);
             sketch.fill(colors[e]);
+            var radius = record.beadSize;
             sketch.stroke(240);
             sketch.ellipse(xPos, yPos, record.beadSize, record.beadSize);
           });

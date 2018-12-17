@@ -12,7 +12,7 @@
         <script language="javascript" src="jspsych/plugins/jspsych-instructions.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-beadtask.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-survey-multi-choice.js"></script>
-        <script language="javascript" src="jspsych/plugins/jspsych-pdi.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-pdi-onepage.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-crt.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-bade.js"></script>
         <script language="javascript" src="jspsych/plugins/jspsych-external-html.js"></script>
@@ -97,38 +97,37 @@
     };
 
     var comprehensionOptions= ['True', 'False'];
-    var correctAnswers = {"Q0": "True", "Q1" : "False", "Q2" : "False", "Q3" : "True", "Q4" : "True"};
+    var correctAnswers = {"Q0": "True", "Q1" : "False", "Q2" : "False", "Q3" : "True"};
+
+    comprehensionQuestions = [
+      {prompt: 'Each urn has different majority colors',
+        options: comprehensionOptions,
+        horizontal: true
+      },
+      {prompt: 'Beads will be drawn from both of the urns',
+        options: comprehensionOptions,
+        horizontal: true
+      },
+      {prompt: 'If five beads are drawn, there will be five fewer beads left in the urn',
+        options: comprehensionOptions,
+        horizontal: true
+      },
+      {prompt: 'Beads of either color could get drawn from the same urn.',
+        options: comprehensionOptions,
+        horizontal: true
+      }
+    ]
 
     var comprehension1 = {
       type: 'survey-multi-choice',
-      questions: [
-        {prompt: 'Each urn has different majority colors',
-          options: comprehensionOptions,
-          horizontal: true
-        },
-        {prompt: 'Beads will be drawn from both of the urns',
-          options: comprehensionOptions,
-          horizontal: true
-        },
-        {prompt: 'If five beads are drawn, there will be five fewer beads left in the urn',
-          options: comprehensionOptions,
-          horizontal: true
-        },
-        {prompt: 'It’s up to me to decide when I’ve seen enough beads',
-          options: comprehensionOptions,
-          horizontal: true
-        },
-        {prompt: 'Beads are drawn at random from the urn',
-          options: comprehensionOptions,
-          horizontal: true
-        }
-      ],
+      questions: comprehensionQuestions,
       on_finish: function(data){
         // score the responses
         var responses = JSON.parse(data.responses);
-        var comprehensionTracker = [0, 0, 0, 0, 0];
+        // initialize an array of 0s
+        var comprehensionTracker = _.map(comprehensionQuestions, function(item){return 0});
         var questionCounter = 0;
-        score = _.reduce(responses, (tally, response, questionNumber)=>{
+        score = _.reduce(responses, function(tally, response, questionNumber){
            if (response == correctAnswers[questionNumber]) {
              comprehensionTracker[questionCounter] = 1
              tally += 1
@@ -143,10 +142,10 @@
     var feedback1 = {
       type: 'instructions',
       pages: function(){
-        if (score < 5){
-          return ['You got ' + score + '/5 correct. We will go through the instructions and demonstration again.'];
+        if (score < 4){
+          return ['You got ' + score + '/4 correct. We will go through the instructions and demonstration again.'];
         } else {
-          return ["You got them all right! We're going to repeat the task 6 times, each with a different set of urns (different bead colors, different ratios of colors, etc.)."];
+          return ["You got them all right! We're going to repeat the task twice, each time with a slight variation in instructions and with a different set of urns."];
         }
       },
       show_clickable_nav: true
@@ -157,7 +156,7 @@
     var loop_node = {
       timeline: [startInstructions, trainingTrial, comprehensionInstructions, comprehension1, feedback1],
       loop_function: function(data){
-        if (score==5){
+        if (score==comprehensionQuestions.length){
           return false;
         } else {
           return true;
@@ -171,98 +170,55 @@
 
     var colors = shuffle([[0, 102, 153], [0, 153, 255], [51, 51, 255], [153, 153, 255], [255, 0, 255], [255, 153, 153]]);
 
-    var ratios1 = shuffle([0.6, 0.70, 0.85]);
-    var ratios2 = shuffle([0.6, 0.70, 0.85]);
-
-    var draws1 = {0.6: flipdraws([0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0]),
-                  0.7: flipdraws([0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0]),
-                  0.85: flipdraws([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0])};
-
-    var draws2 = {0.6:  flipdraws([0, 0, 1, 0, 0, 1, 0, 0, 1, 0]),
-                  0.7:  flipdraws([0, 0, 0, 1, 0, 0, 1, 0, 0, 1]),
-                  0.85: flipdraws([0, 0, 0, 0, 1, 0, 0, 0, 0, 1])};
-
-
     var instructionsDTD = {
       type: 'instructions',
-      pages: ["For the following three trials, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color.",
+      pages: ["For the following trial, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color of the urn.",
       "After each draw, we'll ask you if you'd like to see another bead, or are ready to make your decision.",
-      "Whenever you're confident what the majority color is, just click that you're ready to decide."],
+      "Whenever you're <b>confident</b> what the majority color in the urn is, just click that you're ready to decide."],
       show_clickable_nav: true
     };
 
     var instructionsGE = {
       type: 'instructions',
-      pages: ["For the following three trials, you will always see 10 beads before you can make a decision about what the majority color is.",
+      pages: ["For the following trial, you will see 10 beads before you can make a decision about what the majority color is.",
       "After each draw, you'll rate how confident you are.",
       "Once you've seen 10 beads, we will ask you to make a decision about what the majority color is."],
       show_clickable_nav: true
     };
 
-    var timelineVarsDTD = [
-      {color: colors[0],
-      ratio: ratios1[0],
-      draws: draws1[ratios1[0]]},
-      {color: colors[1],
-      ratio: ratios1[1],
-      draws: draws1[ratios1[1]]},
-      {color: colors[2],
-      ratio: ratios1[2],
-      draws: draws1[ratios1[2]]}
-    ];
-
     beadDTD = {
-        timeline: [{
-          type: 'beadtask',
-          firstColor: jsPsych.timelineVariable('color'),
-          colorRatio: jsPsych.timelineVariable('ratio'),
-          draws: jsPsych.timelineVariable('draws'),
-          beadCount: 100,
-          record: true,
-          graded: true,
-          feedback: false,
-          sequential: true,
-          drawCount: 30}],
-        timeline_variables: timelineVarsDTD,
-        randomize_order: true
+      type: 'beadtask',
+      firstColor: colors[0],
+      colorRatio: 0.6,
+      draws: [0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0],
+      beadCount: 100,
+      record: true,
+      graded: true,
+      feedback: false,
+      sequential: true,
+      drawCount: 30
     };
 
-    var timelineVarsGE = [
-      {color: colors[3],
-      ratio: ratios2[0],
-      draws: draws2[ratios2[0]]},
-      {color: colors[4],
-      ratio: ratios2[1],
-      draws: draws2[ratios2[1]]},
-      {color: colors[5],
-      ratio: ratios2[2],
-      draws: draws2[ratios2[2]]}
-    ];
 
     beadGE = {
-        timeline: [{
-          type: 'beadtask',
-          firstColor: jsPsych.timelineVariable('color'),
-          colorRatio: jsPsych.timelineVariable('ratio'),
-          draws: jsPsych.timelineVariable('draws'),
-          beadCount: 100,
-          record: true,
-          graded: true,
-          feedback: false,
-          sequential: true,
-          allowChoice: false,
-          drawCount: 10}],
-        timeline_variables: timelineVarsGE,
-        randomize_order: true
+      type: 'beadtask',
+      firstColor: colors[1],
+      colorRatio: 0.6,
+      draws: [0, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+      beadCount: 100,
+      record: true,
+      graded: true,
+      feedback: false,
+      sequential: true,
+      allowChoice: false,
+      drawCount: 10
     };
-
 
     if( Math.random() < 1 ){
         beadTimeline = beadTimeline.concat([instructionsGE, beadGE, instructionsDTD, beadDTD]);
     } else {
         beadTimeline = beadTimeline.concat([instructionsDTD, beadDTD, instructionsGE, beadGE]);
     }
-
 
     // Bade task
 
@@ -271,11 +227,9 @@
       pages: ["In this task, we will first ask you to rate how probable 4 statements are, all else being equal.",
       "They may refer to random people, but you can still estimate how probable you think the statements are.",
       "For example, if you were given the statements 'Harriet has less than a thousand dollars' and 'Harriet has more than a million dollars', you might rate the first statement as much more probable than the second because most people aren't millionaires.",
-      "As another example, if you were given the statements 'Chris is an astronaut' and 'Chris is a teacher', you should rate the second more probable because there are lots more teachers than astronauts.",
       "After you've rated how probable the statements are, we will start giving you extra information, piece by piece, about the same people. This extra information may make you want to change your previous probability ratings.",
-      "For example, if we told you that Harriet can't afford to go on vacation, it makes it even less probable that she has a million dollars. If we told you that she just bought another jet, it makes it more probable that she has a million dollars.",
-      "Ultimately, it may turn out that <b>none</b> of the statements is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. Thus, you may have several high ratings, or just one, or none.",
-      "We will do a quick practice trial when you hit next."],
+      "For example, if we also told you that Harriet can't afford to go on vacation, it makes it even less probable that she has a million dollars. If we told you that she just bought another jet, it makes it more probable that she has a million dollars.",
+      "Ultimately, it may turn out that <b>none</b> of the statements is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. Thus, you may have several high ratings, or just one, or none."],
       show_clickable_nav: true
     };
 
@@ -289,30 +243,6 @@
     'somewhat\nprobable',
     'probable\n',
     'extremely\nprobable'];
-
-    var practiceBade = {
-      type: 'bade',
-      rating_type: 'posterior',
-      scale_labels: badeScaleLabels,
-      scenarios: ["Monica helps people find answers to their questions.",
-      "She loves to read.",
-      "At work, Monica is surrounded by books."],
-      explanations: ["Monica works in a library.",
-      "Monica is a fortune teller.",
-      "Monica works in counselling.",
-      "Monica is a tourist."],
-      character_name: "Monica"
-    }
-
-    badeTimeline.push(practiceBade);
-
-    var badeInstructions2 = {
-      type: 'instructions',
-      pages: ["That was a practice trial. Next we will do the real trials."],
-      show_clickable_nav: true
-    };
-
-    badeTimeline.push(badeInstructions2);
 
     var badeTrials = [
       {trial_number: 0,
@@ -345,15 +275,15 @@
       "Janet's children are being taken away by Social Services."],
       character_name: "Janet"},
 
-      {trial_number: 3,
-      scenarios: ["Luke spends lots of time driving.",
-      "Luke is a young man.",
-      "Luke's car often smells like pizza."],
-      explanations: ["Luke is a taxi driver.",
-      "Luke is an ambulance driver.",
-      "Luke is a fisherman.",
-      "Luke delivers pizza."],
-      character_name: "Luke"},
+      // {trial_number: 3,
+      // scenarios: ["Luke spends lots of time driving.",
+      // "Luke is a young man.",
+      // "Luke's car often smells like pizza."],
+      // explanations: ["Luke is a taxi driver.",
+      // "Luke is an ambulance driver.",
+      // "Luke is a fisherman.",
+      // "Luke delivers pizza."],
+      // character_name: "Luke"},
 
       {trial_number: 4,
       scenarios: ["Tiffany watches her diet.",
@@ -375,15 +305,15 @@
       "Jenny is excited about Christmas morning."],
       character_name: "Jenny"},
 
-      {trial_number: 6,
-      scenarios: ["Amanda is very thin.",
-      "Amanda has a difficult life.",
-      "Amanda doesn't even have a home."],
-      explanations: ["Amanda is a runway model.",
-      "Amanda has an eating disorder.",
-      "Amanda has lost her fake teeth.",
-      "Amanda is homeless."],
-      character_name: "Amanda"},
+      // {trial_number: 6,
+      // scenarios: ["Amanda is very thin.",
+      // "Amanda has a difficult life.",
+      // "Amanda doesn't even have a home."],
+      // explanations: ["Amanda is a runway model.",
+      // "Amanda has an eating disorder.",
+      // "Amanda has lost her fake teeth.",
+      // "Amanda is homeless."],
+      // character_name: "Amanda"},
 
       {trial_number: 7,
       scenarios: ["Michael's job is to entertain people.",
@@ -415,15 +345,15 @@
       "Andrea has joined a cult."],
       character_name: "Andrea"},
 
-      {trial_number: 10,
-      scenarios: ["Stella answers the phone at work.",
-      "Stella is a powerful woman.",
-      "Stella went to law school."],
-      explanations: ["Stella is a secretary.",
-      "Stella is a 911 phone call operator.",
-      "Stella is a baby-sitter.",
-      "Stella is a lawyer."],
-      character_name: "Stella"},
+      // {trial_number: 10,
+      // scenarios: ["Stella answers the phone at work.",
+      // "Stella is a powerful woman.",
+      // "Stella went to law school."],
+      // explanations: ["Stella is a secretary.",
+      // "Stella is a 911 phone call operator.",
+      // "Stella is a baby-sitter.",
+      // "Stella is a lawyer."],
+      // character_name: "Stella"},
 
       {trial_number: 11,
       scenarios: ["People often dread visiting John.",
@@ -490,6 +420,7 @@
       timeline: [{
         type: 'bade',
         rating_type: 'posterior',
+        rate_priors: false,
         scale_labels: badeScaleLabels,
         scenarios: jsPsych.timelineVariable('scenarios'),
         explanations: jsPsych.timelineVariable('explanations'),
@@ -503,7 +434,6 @@
 
     badeTimeline.push(bade);
 
-
     // task 3: PDI
 
     var pdiInstructions = {
@@ -516,7 +446,7 @@
     };
 
     var pdi = {
-      type: 'pdi',
+      type: 'pdi-onepage',
       followUp: true,
       attentionCheck: true,
       includeCAPE: true
