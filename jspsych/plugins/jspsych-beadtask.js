@@ -530,6 +530,7 @@ Objects for transitioning between trial stages
           var end_time = Date.now() - start_time;
           trial_data.rts.push({'end': end_time});
           trial_data.choice = choice;
+          trial_data.rightAnswer = trial.rightAnswer;
           trial_data.drawsToDecision = currentDraw;
           trial_data.bonus = currentBonus;
           trial_data.maxDraws = trial.drawCount;
@@ -541,6 +542,7 @@ Objects for transitioning between trial stages
           trial_data.incentive = trial.incentive;
           trial_data.urnChoice = trial.urnChoice;
           trial_data.correct = trial.rightAnswer==trial_data.choice;
+          trial_data.draws = trial.draws;
 
           console.log(trial_data);
 
@@ -1439,7 +1441,6 @@ The following actually uses a short-cut version of instance mode, as described h
         break;
 
       }
-
 
       urn1.display();
       urn2.display();

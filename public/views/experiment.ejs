@@ -53,12 +53,14 @@
 
     var mainInstructions = {
       type: 'instructions',
-      pages: ["You will do four tasks in this survey.",
+      pages: ["You will do five tasks in this survey.",
       "In the first two tasks, you will make decisions based on how probable something is.",
       "Then you will answer some questions about your experiences and perceptions.",
-      "Finally, you will solve a few straightforward math problems.",
+      "Fourth, you will solve a few straightforward math problems.",
+      "Finally, you will answer some questions about words.",
       "After completing all tasks, we'll ask for some biographical information",
       "Please do not google any of the answers. We are interested in your honest responses.",
+      "We have included several <b>attention checks</b>, so please read carefully.",
       "The first task is introduced on the next screen."],
       show_clickable_nav: true
     };
@@ -68,13 +70,12 @@
     // instructions
     var startInstructions = {
       type: 'instructions',
-      pages: ["We are going to do a task that involves drawing colored beads out of an urn until you're confident what the majority color in that urn is.",
+      pages: ["We are going to do a task that involves drawing colored beads out of an urn, to learn what the majority color in that urn is.",
               "We will begin with some detailed instructions, accompanied by a visual illustration of the bead task.",
               "After we've gone through the instructions, your understanding of the task will be tested.",
               "You need to get <b>all</b> the comprehension questions right before you can proceed to the actual task.",
               "If you get <b>any</b> wrong, we'll go through the instructions and test your understanding again, until you get all the test questions right.",
-              "About 50% of participants fail to get them all right on the first attempt, so if you pay careful attention, you can avoid wasting time.",
-              "Now, we will start going through the instructions."],
+              "About 25% of participants fail to get them all right on the first attempt, so if you pay careful attention, you can avoid wasting time."],
       show_clickable_nav: true
     };
 
@@ -112,7 +113,7 @@
         options: comprehensionOptions,
         horizontal: true
       },
-      {prompt: 'Beads of either color could get drawn from the same urn.',
+      {prompt: 'Both colors could get drawn from the same urn.',
         options: comprehensionOptions,
         horizontal: true
       }
@@ -145,7 +146,7 @@
         if (score < 4){
           return ['You got ' + score + '/4 correct. We will go through the instructions and demonstration again.'];
         } else {
-          return ["You got them all right! We're going to repeat the task twice, each time with a slight variation in instructions and with a different set of urns."];
+          return ["You got them all right! We're going to repeat the task twice, each time with a slight variation in instructions and with a different set of urns (and bead colors)."];
         }
       },
       show_clickable_nav: true
@@ -172,7 +173,7 @@
 
     var instructionsDTD = {
       type: 'instructions',
-      pages: ["For the following trial, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color of the urn.",
+      pages: ["In <b>this</b> version of the task, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color of the urn.",
       "After each draw, we'll ask you if you'd like to see another bead, or are ready to make your decision.",
       "Whenever you're <b>confident</b> what the majority color in the urn is, just click that you're ready to decide."],
       show_clickable_nav: true
@@ -180,17 +181,24 @@
 
     var instructionsGE = {
       type: 'instructions',
-      pages: ["For the following trial, you will see 10 beads before you can make a decision about what the majority color is.",
+      pages: ["In <b>this</b> version of the task, you will see 10 beads before you can make a decision about what the majority color is.",
       "After each draw, you'll rate how confident you are.",
       "Once you've seen 10 beads, we will ask you to make a decision about what the majority color is."],
       show_clickable_nav: true
     };
 
+    var drawsDTD;
+    if(Math.random()<0.5){
+      drawsDTD = [0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0]
+    } else {
+      drawsDTD = [1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1]
+    }
+
     beadDTD = {
       type: 'beadtask',
       firstColor: colors[0],
       colorRatio: 0.6,
-      draws: [0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0],
+      draws: drawsDTD,
       beadCount: 100,
       record: true,
       graded: true,
@@ -199,12 +207,19 @@
       drawCount: 30
     };
 
+    var drawsGE;
+    if(Math.random()<0.5){
+      drawsGE = [0, 0, 1, 0, 0, 1, 0, 0, 1, 0]
+    } else {
+      drawsGE = [1, 1, 0, 1, 1, 0, 1, 1, 0, 1]
+    }
+
 
     beadGE = {
       type: 'beadtask',
       firstColor: colors[1],
       colorRatio: 0.6,
-      draws: [0, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+      draws: drawsGE,
       beadCount: 100,
       record: true,
       graded: true,
@@ -214,7 +229,7 @@
       drawCount: 10
     };
 
-    if( Math.random() < 1 ){
+    if( Math.random() < 0.5 ){
         beadTimeline = beadTimeline.concat([instructionsGE, beadGE, instructionsDTD, beadDTD]);
     } else {
         beadTimeline = beadTimeline.concat([instructionsDTD, beadDTD, instructionsGE, beadGE]);
@@ -224,12 +239,13 @@
 
     var badeInstructions = {
       type: 'instructions',
-      pages: ["In this task, we will first ask you to rate how probable 4 statements are, all else being equal.",
-      "They may refer to random people, but you can still estimate how probable you think the statements are.",
-      "For example, if you were given the statements 'Harriet has less than a thousand dollars' and 'Harriet has more than a million dollars', you might rate the first statement as much more probable than the second because most people aren't millionaires.",
-      "After you've rated how probable the statements are, we will start giving you extra information, piece by piece, about the same people. This extra information may make you want to change your previous probability ratings.",
-      "For example, if we also told you that Harriet can't afford to go on vacation, it makes it even less probable that she has a million dollars. If we told you that she just bought another jet, it makes it more probable that she has a million dollars.",
-      "Ultimately, it may turn out that <b>none</b> of the statements is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. Thus, you may have several high ratings, or just one, or none."],
+      pages: ["In this task, we will give you a scenario, and then ask you to rate how likely various explanations are.<br><br>"+
+      "For example, we might give you the information that someone called Harriet hasn't been on vacation in years, and then ask you to rate how likely the following two explanations are: 'Harriet has less than a thousand dollars' and 'Harriet has more than a million dollars'.<br><br>"+
+      "Most people would rate the first explanation as more probable than the second.",
+      "We will then give you more information, piece by piece, about the <b>same</b> scenario. This extra information <b>may</b> make you want to change your previous probability ratings, or <b>may</b> make no difference.<br><br>"+
+      "For instance, we might tell you that Harriet is worried about her rent (making it more likely she's poor), or that she is on the boards of several companies (making it more likely she's rich), or that she likes pizza (which makes no difference).",
+      "Ultimately, it may turn out that <b>none</b> of the explanations is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. Thus, you may have several high ratings, or just one, or none.",
+      "The task is about to begin. We will present scenarios involving 12 different people."],
       show_clickable_nav: true
     };
 
@@ -245,17 +261,38 @@
     'extremely\nprobable'];
 
     var badeTrials = [
+
       {trial_number: 0,
-      scenarios: ["Judy saved the little girl's life.",
-      "Judy's family supported Judy's decision to help the little girl.",
-      "Luckily, Judy is the same blood-type as the little girl."],
-      explanations: ["Judy is a fire-fighter.",
-      "Judy is a doctor.",
-      "Judy is a witch.",
-      "Judy is an organ donor."],
-      character_name: "Judy"},
+      scenarios: ["The picnic came to an abrupt end.",
+      "Everyone went home stunned from the picnic’s outcome.",
+      "By the time the ambulance arrived it was too late."],
+      explanations: ["It started to rain unexpectedly.",
+      "The families began to argue with one another.",
+      "The volcano began to erupt.",
+      "Frank died from an allergic reaction to a bee sting."],
+      character_name: "a picnic"},
 
       {trial_number: 1,
+      scenarios: ["Danielle is very unreliable.",
+      "Danielle does not like criticism.",
+      "Danielle was rude to her boss."],
+      explanations: ["Danielle often forgets her homework.",
+      "Danielle is a poor mother.",
+      "Danielle is not a very good cook.",
+      "Danielle has been fired from her job."],
+      character_name: "Danielle"},
+
+      {trial_number: 2,
+      scenarios: ["Nicole has an immense amount of will power.",
+      "Nicole loves to be challenged.",
+      "Nicole is very fit."],
+      explanations: ["Nicole is studying all night.",
+      "Nicole is a recovering alcoholic.",
+      "Nicole only eats red candy.",
+      "Nicole is a marathon champion."],
+      character_name: "Nicole"},
+
+      {trial_number: 3,
       scenarios: ["Sometimes Veronica goes home in tears.",
       "Veronica does not have many friends.",
       "Veronica is afraid of her classmates."],
@@ -264,26 +301,6 @@
       "Veronica likes to water the plants with her tears.",
       "Veronica is bullied at school."],
       character_name: "Veronica"},
-
-      {trial_number: 2,
-      scenarios: ["Janet is screaming.",
-      "Janet will have to go to court.",
-      "Janet is an irresponsible parent."],
-      explanations: ["Someone scratched the paint on Janet's new car.",
-      "Janet caught her husband cheating on her.",
-      "Janet's bad singing is often mistaken for screaming.",
-      "Janet's children are being taken away by Social Services."],
-      character_name: "Janet"},
-
-      // {trial_number: 3,
-      // scenarios: ["Luke spends lots of time driving.",
-      // "Luke is a young man.",
-      // "Luke's car often smells like pizza."],
-      // explanations: ["Luke is a taxi driver.",
-      // "Luke is an ambulance driver.",
-      // "Luke is a fisherman.",
-      // "Luke delivers pizza."],
-      // character_name: "Luke"},
 
       {trial_number: 4,
       scenarios: ["Tiffany watches her diet.",
@@ -305,17 +322,7 @@
       "Jenny is excited about Christmas morning."],
       character_name: "Jenny"},
 
-      // {trial_number: 6,
-      // scenarios: ["Amanda is very thin.",
-      // "Amanda has a difficult life.",
-      // "Amanda doesn't even have a home."],
-      // explanations: ["Amanda is a runway model.",
-      // "Amanda has an eating disorder.",
-      // "Amanda has lost her fake teeth.",
-      // "Amanda is homeless."],
-      // character_name: "Amanda"},
-
-      {trial_number: 7,
+      {trial_number: 6,
       scenarios: ["Michael's job is to entertain people.",
       "Michael is a little shy sometimes.",
       "Michael sits in front of a computer writing all day long."],
@@ -325,17 +332,7 @@
       "Michael's job is to write novels."],
       character_name: "Michael"},
 
-      {trial_number: 8,
-      scenarios: ["Nicholas is driving his car very fast.",
-      "Nicholas did not stop at the red light.",
-      "Nicholas injured a little girl with his car."],
-      explanations: ["Nicholas is running late for work.",
-      "Nicholas' wife is in labour.",
-      "Nicholas hates going for walks.",
-      "Nicholas is a hit and run offender."],
-      character_name: "Nicholas"},
-
-      {trial_number: 9,
+      {trial_number: 7,
       scenarios: ["Andrea has made some new friends.",
       "Andrea's new friends control every single aspect of her life.",
       "Andrea has very suddenly cut off all contact with her family."],
@@ -345,27 +342,8 @@
       "Andrea has joined a cult."],
       character_name: "Andrea"},
 
-      // {trial_number: 10,
-      // scenarios: ["Stella answers the phone at work.",
-      // "Stella is a powerful woman.",
-      // "Stella went to law school."],
-      // explanations: ["Stella is a secretary.",
-      // "Stella is a 911 phone call operator.",
-      // "Stella is a baby-sitter.",
-      // "Stella is a lawyer."],
-      // character_name: "Stella"},
-
-      {trial_number: 11,
-      scenarios: ["People often dread visiting John.",
-      "John tries his best to make people feel comfortable.",
-      "John hands out free toothbrushes."],
-      explanations: ["John always tells his guests long and boring stories.",
-      "John is in the hospital.",
-      "John is a famous hockey player.",
-      "John is a dentist."],
-      character_name: "John"},
-
-      {trial_number: 12,
+      //distractors
+      {trial_number: 8,
       scenarios: ["Jason is a successful business man.",
       "Jason's clients are mainly young people.",
       "Jason never gets caught by the police."],
@@ -375,17 +353,7 @@
       "Jason is a drug dealer."],
       character_name: "Jason"},
 
-      {trial_number: 13,
-      scenarios: ["Emily stays home for the night.",
-      "Emily feels that men are unreliable. ",
-      "Emily has been waiting for her date to arrive for hours."],
-      explanations: ["Emily has been grounded.",
-      "Emily has an infection.",
-      "Emily's date's car has broken down.",
-      "Emily has been stood up by her date."],
-      character_name: "Emily"},
-
-      {trial_number: 14,
+      {trial_number: 9,
       scenarios: ["Gary is responsible for many lives.",
       "Gary's work can get be quite boring and repetitive.",
       "Gary's route is one of the busiest."],
@@ -395,7 +363,7 @@
       "Gary is a sports-cast announcer."],
       character_name: "Gary"},
 
-      {trial_number: 15,
+      {trial_number: 10,
       scenarios: ["Eric often carries binoculars with him.",
       "Eric always has an unpredictable schedule.",
       "Eric tries to solve mysteries."],
@@ -405,10 +373,11 @@
       "Eric is a tennis player."],
       character_name: "Eric"},
 
-      {trial_number: 16,
+      // attention check
+      {trial_number: 11,
       scenarios: ["Susan can hardly speak or think.",
       "Susan made a bad decision in her past.",
-      "To show you're reading this, set all response sliders to the minimum."],
+      "To show you are being careful, please set all response sliders to the minimum."],
       explanations: ["Susan is very drunk.",
       "Susan is mentally handicapped.",
       "Susan has been kidnapped.",
@@ -429,6 +398,7 @@
       }],
       timeline_variables: badeTrials,
       randomize_order: true,
+      rate_priors: false,
       post_trial_gap: 900
     }
 
@@ -438,7 +408,7 @@
 
     var pdiInstructions = {
       type: 'instructions',
-      pages: ["Almost there! Next is a quick questionnaire designed to measure beliefs and vivid mental experiences. ",
+      pages: ["Next (the 3rd task of 5) is a quick questionnaire designed to measure beliefs and vivid mental experiences. ",
       "We believe that these beliefs and experiences are much more common than has previously been supposed, and that most people have had some such experiences during their lives. ",
       "Please answer the following questions as honestly as you can. ",
       "Please note that we are NOT asking about experiences people may have had when under the influence of drugs."],
@@ -457,7 +427,7 @@
     var crt_instructions = {
       type: "instructions",
       show_clickable_nav: true,
-      pages: ["In the final task, you will solve some simple math or logic problems. They can all be worked out fairly straightforwardly. You certainly <b>don't</b> need paper and a pen/pencil for working them out. If you think you might, you're probably overthinking things.",
+      pages: ["Almost there! In the next task (task 4 of 5), you will solve some simple math or logic problems. They can all be worked out fairly straightforwardly. You certainly <b>don't</b> need paper and a pen/pencil for working them out. If you think you might, you're probably overthinking things.",
       "Do not answer 'I don't know' or 'no idea' or similar. Just give your best answer."]
     };
 
@@ -475,8 +445,17 @@
     {qNo: 5, question: "Emily's father has three daughters. The first two are named April and May. What is the third daughter's name?"},
     {qNo: 6, question: "How many cubic feet of dirt are there in a hole that is 3' deep x 3' wide x 3' long?",
     unit: "cubic feet"},
-    {qNo: 7, question: "How many days are there in a week? To show you're reading this, enter double the actual number",
-    unit: "days"}
+    // attention check
+    {qNo: 7, question: "How many days are there in two weeks? To show you're reading this, enter double the actual number.",
+    unit: "days"},
+    // verbal reasoning from Condon & Revelle (2014)
+    {qNo: 8, question: "What number is one fifth of one fourth of one ninth of 900?"},
+    {qNo: 9, question: "Zach is taller than Matt and Richard is shorter than Zach. Which of the following statements would be most accurate?<br><br>"+
+    "(1) Richard is taller than Matt (2) Richard is shorter than Matt (3) Richard is as tall as Matt (4) It's impossible to tell",
+    unit: "[enter number]"},
+    {qNo: 10, question: "Joshua is 12 years old and his sister is three times as old as he. When Joshua is 23 years old, how old will his sister be?",
+    unit: "years old"},
+    {qNo: 11, question: "If the day after tomorrow is two days before Thursday then what day is it today?"}
     ];
 
     var crtTrial = {
@@ -485,25 +464,121 @@
       unit: jsPsych.timelineVariable('unit'),
       options: jsPsych.timelineVariable('options'),
       qNo: jsPsych.timelineVariable('qNo'),
-      naivete: false
+      naivete: false,
     };
 
     var crtTrials = {
         timeline: [crtTrial],
         timeline_variables: crt_questions,
+        randomize_order: true,
     };
 
     var crtNaivete = {
       type: 'survey-multi-choice',
       questions: [
-        {prompt: "The problems you've just finished are adapted from classic problems that are quite common on Turk, or web pages or books about problem solving, so you may have seen them before.<br><br>"+
+        {prompt: "Some of the problems you've just finished are adapted from classic problems that are quite common on Turk, or web pages or books about problem solving, so you may have seen them before.<br><br>"+
         "You may have seen them with different wording (e.g., referring to the cost of a bat and a ball, time taking for machines to make widgets, and the time taken for lily pads to grow)<br><br>"+
-        "Have you seen any of these problems before? Please answer honestly since it won't affect the rest of the survey or your payment, but will affect our data.<br><br>",
+        "Have you seen <b>any</b> of these problems before? Please answer honestly since it won't affect the rest of the survey or your payment, but will affect our data.<br><br>",
           options: [' Definitely not', ' Probably not', ' Uncertain', ' Probably yes', ' Definitely yes'],
           horizontal: true
         }
       ]
     }
+
+    // task 5: wordsum
+
+    var wordSum_instructions = {
+      type: 'instructions',
+      show_clickable_nav: true,
+      pages: ["In the last task, you'll answer a multiple-choice vocabulary test. Please do not google the answers - we just want to know which words you really know and there is no prize for doing well in this task.<br><br>"+
+      "For the same reason, you should choose \"don't know\" rather than guessing if you don't know the answer.<br><br>"+
+      "Click NEXT to start."]
+    };
+
+    var wordSum_questions = [
+        {qNo: 0,
+        prompt: 'SPACE',
+        options: ['school', 'noon', 'captain', 'room', 'board', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 1,
+        prompt:'BROADEN',
+        options: ['efface', 'make level', 'elapse', 'embroider', 'widen', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 2,
+        prompt:'EMANATE',
+        options: ['populate', 'free', 'prominent', 'rival', 'come', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 3,
+        prompt:'EDIBLE',
+        options: ['auspicious', 'eligible', 'fit to eat', 'sagacious', 'able to speak', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 4,
+        prompt:'ANIMOSITY',
+        options: ['hatred', 'animation', 'disobedience', 'diversity', 'friendship', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 5,
+        prompt:'PACT',
+        options: ['puissance', 'remonstrance', 'agreement', 'skillet', 'pressure', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 6,
+        prompt:'CLOISTERED',
+        options: ['miniature', 'bunched', 'arched', 'malady', 'secluded', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 7,
+        prompt:'CAPRICE',
+        options: ['value', 'star', 'grimace', 'whim', 'inducement', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 8,
+        prompt:'ACCUSTOM',
+        options: ['disappoint', 'customary', 'encounter', 'get used to', 'business', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 9,
+        prompt:'ALLUSION',
+        options: ['reference', 'dream', 'eulogy', 'illusion', 'aria', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 10,
+        prompt:'APPARITION',
+        options: ['ghost', 'insurrection', 'apparent', 'farce', 'apparel', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 11,
+        prompt:'CONFOUND',
+        options: ['discovered', 'fulfill', 'establish', 'mix up', 'expire', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 12,
+        prompt:'APERTURE',
+        options: ['through', 'precipice', 'opening', 'raiment', 'opportunity', "don't know"],
+        horizontal: true,
+        required: true},
+        {qNo: 13,
+        prompt:'RECIPROCAL',
+        options: ['saturnine', 'mutual', 'receptive', 'morose', 'careless', "don't know"],
+        horizontal: true,
+        required: true},
+      ];
+
+    wordSum_questions = jsPsych.randomization.repeat(wordSum_questions, 1);
+
+    var wordSum = {
+      type: 'survey-multi-choice',
+      questions: wordSum_questions,
+      post_trial_gap: 500,
+      preamble: 'Select the best-fitting meaning for each word.',
+      on_finish: function(data){
+        jsPsych.data.get().addToLast({order: wordSum_questions});
+      }
+    };
 
     // Biographic info
 
@@ -612,9 +687,9 @@
       timeline = timeline.concat(beadTimeline)
     }
 
+    // NO!
     // timeline = timeline.concat(beadTimeline);
     // timeline = timeline.concat(badeTimeline);
-
 
     timeline.push(pdiInstructions);
     timeline.push(pdi);
@@ -623,8 +698,10 @@
     timeline.push(crtTrials);
     timeline.push(crtNaivete);
 
-    timeline.push(biographic);
+    timeline.push(wordSum_instructions);
+    timeline.push(wordSum);
 
+    timeline.push(biographic);
 
     jsPsych.init({
         default_iti: 500,
@@ -639,7 +716,6 @@
           save();
         }
     });
-
 
 function save(){
   var endTime = (new Date()).getTime();
@@ -691,21 +767,6 @@ function makeCode(len){
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
-};
-
-function flipdraws(draws){
-  // Randomly flip a list of draws, so that the majority color could 0s or 1s
-  // For the inputs below, it's always 0s
-  var flip = Math.random();
-  var out = [];
-  if( flip < 0.5){
-    draws.forEach(function(e){
-      out.push(Math.abs(e-1));
-    });
-    return out;
-  } else {
-    return draws;
-  }
 };
 
 
