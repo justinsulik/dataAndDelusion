@@ -53,14 +53,14 @@
 
     var mainInstructions = {
       type: 'instructions',
-      pages: ["You will do five tasks in this survey.",
-      "In the first two tasks, you will make decisions based on how probable something is.",
-      "Then you will answer some questions about your experiences and perceptions.",
-      "Fourth, you will solve a few straightforward math problems.",
-      "Finally, you will answer some questions about words.",
-      "After completing all tasks, we'll ask for some biographical information",
-      "Please do not google any of the answers. We are interested in your honest responses.",
-      "We have included several <b>attention checks</b>, so please read carefully.",
+      pages: ["You will do five tasks in this survey.<br><br>"+
+      "In the first two tasks, you will make decisions based on how probable something is.<br><br>"+
+      "Then you will answer some questions about your experiences and perceptions.<br><br>"+
+      "Fourth, you will solve a few straightforward math problems.<br><br>"+
+      "Finally, you will answer some questions about words.<br><br>"+
+      "After completing all tasks, we'll ask for some biographical information.",
+      "Please do not google any of the answers. We are interested in your honest responses.<br><br>"+
+      "We have included several <b>attention checks</b>, so please read carefully.<br><br>"+
       "The first task is introduced on the next screen."],
       show_clickable_nav: true
     };
@@ -70,11 +70,11 @@
     // instructions
     var startInstructions = {
       type: 'instructions',
-      pages: ["We are going to do a task that involves drawing colored beads out of an urn, to learn what the majority color in that urn is.",
+      pages: ["We are going to do a task that involves drawing colored beads out of an urn, to learn what the majority color in that urn is.<br><br>"+
               "We will begin with some detailed instructions, accompanied by a visual illustration of the bead task.",
-              "After we've gone through the instructions, your understanding of the task will be tested.",
-              "You need to get <b>all</b> the comprehension questions right before you can proceed to the actual task.",
-              "If you get <b>any</b> wrong, we'll go through the instructions and test your understanding again, until you get all the test questions right.",
+              "After we've gone through the instructions, your understanding of the task will be tested.<br><br>"+
+              "You need to get <b>all</b> the comprehension questions right before you can proceed to the actual task.<br><br>"+
+              "If you get <b>any</b> wrong, we'll go through the instructions and test your understanding again, until you get all the test questions right.<br><br>"+
               "About 25% of participants fail to get them all right on the first attempt, so if you pay careful attention, you can avoid wasting time."],
       show_clickable_nav: true
     };
@@ -91,8 +91,8 @@
 
     var comprehensionInstructions = {
       type: 'instructions',
-      pages: ["Next we are going to check whether you've understood the previous instructions by asking some True/False questions.",
-              "You will not be able to proceed with the experiment until all of these comprehension questions are answered correctly.",
+      pages: ["Next we are going to check whether you've understood the previous instructions by asking some True/False questions.<br><br>"+
+              "You will not be able to proceed with the experiment until all of these comprehension questions are answered correctly.<br><br>"+
               "If you get any of these wrong, the previous instructions will be replayed so that you can check what the right answers are."],
       show_clickable_nav: true
     };
@@ -173,16 +173,16 @@
 
     var instructionsDTD = {
       type: 'instructions',
-      pages: ["In <b>this</b> version of the task, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color of the urn.",
-      "After each draw, we'll ask you if you'd like to see another bead, or are ready to make your decision.",
+      pages: ["In <b>this</b> version of the task, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color of the urn.<br><br>"+
+      "After each draw, we'll ask you if you'd like to see another bead, or are ready to make your decision.<br><br>"+
       "Whenever you're <b>confident</b> what the majority color in the urn is, just click that you're ready to decide."],
       show_clickable_nav: true
     };
 
     var instructionsGE = {
       type: 'instructions',
-      pages: ["In <b>this</b> version of the task, you will see 10 beads before you can make a decision about what the majority color is.",
-      "After each draw, you'll rate how confident you are.",
+      pages: ["In <b>this</b> version of the task, you will see 10 beads before you can make a decision about what the majority color is.<br><br>"+
+      "After each draw, you'll rate how confident you are.<br><br>"+
       "Once you've seen 10 beads, we will ask you to make a decision about what the majority color is."],
       show_clickable_nav: true
     };
@@ -244,8 +244,8 @@
       "Most people would rate the first explanation as more probable than the second.",
       "We will then give you more information, piece by piece, about the <b>same</b> scenario. This extra information <b>may</b> make you want to change your previous probability ratings, or <b>may</b> make no difference.<br><br>"+
       "For instance, we might tell you that Harriet is worried about her rent (making it more likely she's poor), or that she is on the boards of several companies (making it more likely she's rich), or that she likes pizza (which makes no difference).",
-      "Ultimately, it may turn out that <b>none</b> of the explanations is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. Thus, you may have several high ratings, or just one, or none.",
-      "The task is about to begin. We will present scenarios involving 12 different people."],
+      "Ultimately, it may turn out that <b>none</b> of the explanations is very probable, that <b>one</b> is more probable that the others, or that <b>a couple</b> are equally probable. Thus, you may have several high ratings, or just one, or none.<br><br>"+
+      "We will present scenarios involving 12 different people. The task will begin on the next page."],
       show_clickable_nav: true
     };
 
@@ -408,9 +408,9 @@
 
     var pdiInstructions = {
       type: 'instructions',
-      pages: ["Next (the 3rd task of 5) is a quick questionnaire designed to measure beliefs and vivid mental experiences. ",
-      "We believe that these beliefs and experiences are much more common than has previously been supposed, and that most people have had some such experiences during their lives. ",
-      "Please answer the following questions as honestly as you can. ",
+      pages: ["Next (the 3rd task of 5) is a quick questionnaire designed to measure beliefs and vivid mental experiences.<br><br>"+
+      "We believe that these beliefs and experiences are much more common than has previously been supposed, and that most people have had some such experiences during their lives.<br><br>"+
+      "Please answer the following questions as honestly as you can.<br><br>"+
       "Please note that we are NOT asking about experiences people may have had when under the influence of drugs."],
       show_clickable_nav: true
     };
@@ -427,8 +427,10 @@
     var crt_instructions = {
       type: "instructions",
       show_clickable_nav: true,
-      pages: ["Almost there! In the next task (task 4 of 5), you will solve some simple math or logic problems. They can all be worked out fairly straightforwardly. You certainly <b>don't</b> need paper and a pen/pencil for working them out. If you think you might, you're probably overthinking things.",
-      "Do not answer 'I don't know' or 'no idea' or similar. Just give your best answer."]
+      pages: ["Almost there! In the next task (task 4 of 5), you will solve some simple math or logic problems.<br><br>"+
+      "They can all be worked out fairly straightforwardly. You certainly <b>don't</b> need paper and a pen/pencil for working them out. If you think you might, you're probably overthinking things.<br><br>"+
+      "Do not answer 'I don't know' or 'no idea' or similar. Just give your best answer.<br><br>"+
+      "The task begins on the next page."]
     };
 
     var crt_questions = [
@@ -492,7 +494,7 @@
       show_clickable_nav: true,
       pages: ["In the last task, you'll answer a multiple-choice vocabulary test. Please do not google the answers - we just want to know which words you really know and there is no prize for doing well in this task.<br><br>"+
       "For the same reason, you should choose \"don't know\" rather than guessing if you don't know the answer.<br><br>"+
-      "Click NEXT to start."]
+      "The task starts on the next page."]
     };
 
     var wordSum_questions = [
