@@ -101,7 +101,6 @@ app.get('/', (req, res) => {
 
 });
 
-
 app.get('/x4d89', (req, res) => {
   const sessId = req.session.id;
   const query = {'sessionId': sessId};
@@ -143,11 +142,17 @@ app.get('/x4d89', (req, res) => {
 
 app.get('/TyNFQbzAlF', (req, res) => {
   let code = req.query.gvmejG;
-  if(code.length>=0){
-    code = code +'5'+makeCode(3) + 's';
+  if(code){
+    if(code.length>=0){
+      code = code +'5'+makeCode(3) + 's';
+    } else {
+      code = makeCode(10) + 'E3E';
+    }
+
   } else {
     code = makeCode(10) + 'E3E';
   }
+
   res.render('finish.ejs', {completionCode: code});
 });
 
@@ -165,8 +170,9 @@ app.post('/Vn3OGu8kcy', (req, res) => {
       trialData: data,
       trialId: trialId,
       studyName: studyName,
-  })
-  .then(res.status(200).end());
+  });
+  
+  res.status(200).end();
 });
 
 
