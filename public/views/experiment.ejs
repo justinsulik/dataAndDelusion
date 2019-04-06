@@ -677,33 +677,33 @@
       cont_btn: 'submit',
     }
 
-    timeline.push(consent);
-    timeline.push(mainInstructions);
+    // timeline.push(consent);
+    // timeline.push(mainInstructions);
 
     // Randomize order of bead/bade tasks
-    if( Math.random() < 0.5 ){
-      timeline = timeline.concat(beadTimeline)
-      timeline = timeline.concat(badeTimeline)
-    } else {
-      timeline = timeline.concat(badeTimeline)
-      timeline = timeline.concat(beadTimeline)
-    }
+    // if( Math.random() < 0.5 ){
+    //   timeline = timeline.concat(beadTimeline)
+    //   timeline = timeline.concat(badeTimeline)
+    // } else {
+    //   timeline = timeline.concat(badeTimeline)
+    //   timeline = timeline.concat(beadTimeline)
+    // }
 
     // NO!
     // timeline = timeline.concat(beadTimeline);
-    // timeline = timeline.concat(badeTimeline);
+    timeline = timeline.concat(badeTimeline);
 
-    timeline.push(pdiInstructions);
-    timeline.push(pdi);
-
-    timeline.push(crt_instructions);
-    timeline.push(crtTrials);
-    timeline.push(crtNaivete);
-
-    timeline.push(wordSum_instructions);
-    timeline.push(wordSum);
-
-    timeline.push(biographic);
+    // timeline.push(pdiInstructions);
+    // timeline.push(pdi);
+    //
+    // timeline.push(crt_instructions);
+    // timeline.push(crtTrials);
+    // timeline.push(crtNaivete);
+    //
+    // timeline.push(wordSum_instructions);
+    // timeline.push(wordSum);
+    //
+    // timeline.push(biographic);
 
     jsPsych.init({
         default_iti: 500,
