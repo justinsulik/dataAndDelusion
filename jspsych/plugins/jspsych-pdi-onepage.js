@@ -236,8 +236,8 @@ Content
 
     questionOrder.forEach(function(shuffledIndex, unshuffledIndex){
       var textContainer = '<div class="left"><p>'+questions[shuffledIndex]+'</p></div>';
-      var noResponse = '<input type="radio" class="dichotomous" name="response_'+shuffledIndex+'" value="yes"> Yes </input>';
-      var yesResponse = '<input type="radio" class="dichotomous" name="response_'+shuffledIndex+'" value="no"> No </input>';
+      var noResponse = '<label><input type="radio" class="dichotomous" name="response_'+shuffledIndex+'" value="yes"> Yes </label>';
+      var yesResponse = '<label><input type="radio" class="dichotomous" name="response_'+shuffledIndex+'" value="no"> No </label>';
       var dichotomousContainer = '<div id="dichotomous_'+shuffledIndex+'" class="dichotomous">'+noResponse+yesResponse+'</div>';
       var leftBox = '<div id="main_'+shuffledIndex+'" class="container column">'+textContainer+dichotomousContainer+'</div>';
 

@@ -23,12 +23,10 @@
     </body>
     <script>
 
-    var trialId = <%- trialId %>
+    // jsPsych.data.addProperties({trialId: trialId});
 
-    jsPsych.data.addProperties({trialId: trialId});
-
-    var cmpltnCd = makeCode(3)+'RtR' + makeCode(5) + '4z4'
-    jsPsych.data.addProperties({cmpltnCd: cmpltnCd});
+    // var cmpltnCd = makeCode(3)+'RtR' + makeCode(5) + '4z4'
+    // jsPsych.data.addProperties({cmpltnCd: cmpltnCd});
 
     var timeline = [];
     var beadTimeline = [];
@@ -53,15 +51,20 @@
 
     var mainInstructions = {
       type: 'instructions',
-      pages: ["You will do five tasks in this survey.<br><br>"+
-      "In the first two tasks, you will make decisions based on how probable something is.<br><br>"+
-      "Then you will answer some questions about your experiences and perceptions.<br><br>"+
-      "Fourth, you will solve a few straightforward math problems.<br><br>"+
-      "Finally, you will answer some questions about words.<br><br>"+
-      "After completing all tasks, we'll ask for some biographical information.",
-      "Please do not google any of the answers. We are interested in your honest responses.<br><br>"+
-      "We have included several <b>attention checks</b>, so please read carefully.<br><br>"+
-      "The first task is introduced on the next screen."],
+      pages: ["<p>This is a demonstration of the study at <a href='https://osf.io/fvkcn/'>https://osf.io/fvkcn/</a></p>"+
+      "<p>It is NOT optimized for viewing on a mobile device.</p>"+
+      "<p>Since it is a demonstration, we have dropped the consent form and debriefing, "+
+      "and no data will be saved. Otherwise, it appears as it did to participants.</p>"+
+      "<p>The study begins on the next page</p>",
+      "<p>You will do five tasks in this survey.</p>"+
+      "<p>In the first two tasks, you will make decisions based on how probable something is.</p>"+
+      "<p>Then you will answer some questions about your experiences and perceptions.</p>"+
+      "<p>Fourth, you will solve a few straightforward math problems.</p>"+
+      "<p>Finally, you will answer some questions about words.</p>"+
+      "<p>After completing all tasks, we'll ask for some biographical information.</p>",
+      "<p>Please do not google any of the answers. We are interested in your honest responses.</p>"+
+      "<p>We have included several <b>attention checks</b>, so please read carefully.</p>"+
+      "<p>The first task is introduced on the next screen.</p>"],
       show_clickable_nav: true
     };
 
@@ -169,7 +172,7 @@
 
     // trial data
 
-    var colors = shuffle([[0, 102, 153], [0, 153, 255], [51, 51, 255], [153, 153, 255], [255, 0, 255], [255, 153, 153]]);
+    var colors = jsPsych.randomization.shuffle([[0, 102, 153], [0, 153, 255], [51, 51, 255], [153, 153, 255], [255, 0, 255], [255, 153, 153]]);
 
     var instructionsDTD = {
       type: 'instructions',
@@ -679,32 +682,32 @@
     }
 
     // timeline.push(consent);
-    // timeline.push(mainInstructions);
+    timeline.push(mainInstructions);
 
-    // Randomize order of bead/bade tasks
-    // if( Math.random() < 0.5 ){
-    //   timeline = timeline.concat(beadTimeline)
-    //   timeline = timeline.concat(badeTimeline)
-    // } else {
-    //   timeline = timeline.concat(badeTimeline)
-    //   timeline = timeline.concat(beadTimeline)
-    // }
+    // // Randomize order of bead/bade tasks
+    if( Math.random() < 0.5 ){
+      timeline = timeline.concat(beadTimeline)
+      timeline = timeline.concat(badeTimeline)
+    } else {
+      timeline = timeline.concat(badeTimeline)
+      timeline = timeline.concat(beadTimeline)
+    }
 
     // NO!
-    timeline = timeline.concat(beadTimeline);
+    // timeline = timeline.concat(beadTimeline);
     // timeline = timeline.concat(badeTimeline);
 
-    // timeline.push(pdiInstructions);
-    // timeline.push(pdi);
+    timeline.push(pdiInstructions);
+    timeline.push(pdi);
     //
     timeline.push(crt_instructions);
     timeline.push(crtTrials);
-    // timeline.push(crtNaivete);
+    timeline.push(crtNaivete);
     //
-    // timeline.push(wordSum_instructions);
-    // timeline.push(wordSum);
+    timeline.push(wordSum_instructions);
+    timeline.push(wordSum);
     //
-    // timeline.push(biographic);
+    timeline.push(biographic);
 
     jsPsych.init({
         default_iti: 500,
@@ -716,61 +719,9 @@
         },
         timeline: timeline,
         on_finish: function(){
-          save();
+          window.location.href = "/finish";
         }
     });
-
-function save(){
-  var endTime = (new Date()).getTime();
-  var duration = endTime-startTime;
-  var interactionData = jsPsych.data.getInteractionData().json();
-  jsPsych.data.get().addToLast({biodata: bioData,
-                                duration: duration,
-                                interactionData: interactionData,
-                                comprehension: comprehensionRounds});
-
-  var data = jsPsych.data.get().json();
-  console.log('    About to post survey output data...', data);
-
-  var dataUrl = '/Vn3OGu8kcy?trialId=' + trialId;
-  $.ajax({
-     type: 'POST',
-     url: dataUrl,
-     data: data,
-     contentType: "application/json",
-     error: function(request, status, error){
-       console.log('    Error posting data...', request, status, error)
-     },
-     complete: finish(cmpltnCd)
-   });
-}
-
-function finish(cmpltnCd){
-  cmpltnCd +=  trialId;
-  window.location.href = "/TyNFQbzAlF?gvmejG="+cmpltnCd;
-}
-
-function shuffle(unshuffled){
-  // shuffle an array
-  var shuffled = [];
-  var N = unshuffled.length;
-  for( var i = 0; i < N; i++ ){
-    var index = Math.floor(Math.random() * (unshuffled.length));
-    var newValue = unshuffled[index];
-    shuffled.push(newValue);
-    unshuffled.splice(index, 1);
-  }
-  return shuffled;
-};
-
-function makeCode(len){
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwxy0123456789";
-    for( var i=0; i < len; i++ ){
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-};
 
 
     </script>

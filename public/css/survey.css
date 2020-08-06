@@ -2,6 +2,11 @@ body {
     text-align: left;
 }
 
+#jspsych-content {
+  text-align: left;
+  width: 800px;
+}
+
 .parent {
     position:absolute;
     top:0;
