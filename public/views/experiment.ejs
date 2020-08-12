@@ -232,12 +232,12 @@
       drawCount: 10
     };
 
-    // if( Math.random() < 0.5 ){
-    //     beadTimeline = beadTimeline.concat([instructionsGE, beadGE, instructionsDTD, beadDTD]);
-    // } else {
-    //     beadTimeline = beadTimeline.concat([instructionsDTD, beadDTD, instructionsGE, beadGE]);
-    // }
-    beadTimeline = beadTimeline.concat([instructionsGE, beadGE]);
+    if( Math.random() < 0.5 ){
+        beadTimeline = beadTimeline.concat([instructionsGE, beadGE, instructionsDTD, beadDTD]);
+    } else {
+        beadTimeline = beadTimeline.concat([instructionsDTD, beadDTD, instructionsGE, beadGE]);
+    }
+    // beadTimeline = beadTimeline.concat([instructionsGE, beadGE]);
 
     // Bade task
 
