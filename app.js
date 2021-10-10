@@ -29,6 +29,12 @@ app.get('/', (req, res) => {
 
 });
 
+app.get('/beads', (req, res) => {
+
+  res.render('beadsdemo.ejs');
+
+});
+
 app.get('/finish', (req, res) => {
 
   res.send('<p>The demonstration is completed. You may close this window.');

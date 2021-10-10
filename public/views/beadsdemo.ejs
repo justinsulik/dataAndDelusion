@@ -1,0 +1,228 @@
+
+
+<!-- <!DOCTYPE html> -->
+<html>
+    <head>
+        <title>Experiment</title>
+        <script language="javascript" src="libraries/p5.min.js"></script>
+        <script language="javascript" src="libraries/p5.dom.js"></script>
+        <script language="javascript" src="libraries/lodash.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script language="javascript" src="jspsych/jspsych.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-instructions.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-beadtask.js"></script>
+        <script language="javascript" src="jspsych/plugins/jspsych-survey-multi-choice.js"></script>
+        <link href="jspsych/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <link href="./css/survey.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body>
+    </body>
+    <script>
+
+    // jsPsych.data.addProperties({trialId: trialId});
+
+    // var cmpltnCd = makeCode(3)+'RtR' + makeCode(5) + '4z4'
+    // jsPsych.data.addProperties({cmpltnCd: cmpltnCd});
+
+    var timeline = [];
+    var score = 0;
+    var comprehensionRounds = [];
+
+    // Initial instructions
+
+    var mainInstructions = {
+      type: 'instructions',
+      pages: ["<p>This is a demonstration of the animated Beads Task in the study at <a href='https://osf.io/fvkcn/'>https://osf.io/fvkcn/</a>. "+
+      "It includes the comprehension test, and then demonstrates the Draws To Decision version of the task, and finally the Graded Estimates version.</p>"+
+      "<p>It is NOT optimized for viewing on a mobile device. No data will be saved.</p>"+
+      "<p>For the demo of the <i>full</i> experiment (not just the Beads Task), just delete 'beads' from the end of this URL."],
+      show_clickable_nav: true
+    };
+
+
+    // Beads instructions
+    var startInstructions = {
+      type: 'instructions',
+      pages: ["We are going to do a task that involves drawing colored beads out of an urn, to learn what the majority color in that urn is.<br><br>"+
+              "We will begin with some detailed instructions, accompanied by a visual illustration of the bead task.",
+              "After we've gone through the instructions, your understanding of the task will be tested.<br><br>"+
+              "You need to get <b>all</b> the comprehension questions right before you can proceed to the actual task.<br><br>"+
+              "If you get <b>any</b> wrong, we'll go through the instructions and test your understanding again, until you get all the test questions right.<br><br>"+
+              "About 25% of participants fail to get them all right on the first attempt, so if you pay careful attention, you can avoid wasting time."],
+      show_clickable_nav: true
+    };
+
+    // practice trial
+    var trainingTrial = {
+      type: 'beadtask',
+      training: true,
+      firstColor: [0, 0, 0],
+      colorRatio: 0.8
+    };
+
+    // elements needed for comprehension check, and for looping back through the instructions if participant fails the comprehension check
+
+    var comprehensionInstructions = {
+      type: 'instructions',
+      pages: ["Next we are going to check whether you've understood the previous instructions by asking some True/False questions.<br><br>"+
+              "You will not be able to proceed with the experiment until all of these comprehension questions are answered correctly.<br><br>"+
+              "If you get any of these wrong, the previous instructions will be replayed so that you can check what the right answers are."],
+      show_clickable_nav: true
+    };
+
+    var comprehensionOptions= ['True', 'False'];
+    var correctAnswers = {"Q0": "True", "Q1" : "False", "Q2" : "False", "Q3" : "True"};
+
+    comprehensionQuestions = [
+      {prompt: 'Each urn has different majority colors',
+        options: comprehensionOptions,
+        horizontal: true
+      },
+      {prompt: 'Beads will be drawn from both of the urns',
+        options: comprehensionOptions,
+        horizontal: true
+      },
+      {prompt: 'If five beads are drawn, there will be five fewer beads left in the urn',
+        options: comprehensionOptions,
+        horizontal: true
+      },
+      {prompt: 'Both colors could get drawn from the same urn.',
+        options: comprehensionOptions,
+        horizontal: true
+      }
+    ]
+
+    var comprehension1 = {
+      type: 'survey-multi-choice',
+      questions: comprehensionQuestions,
+      on_finish: function(data){
+        // score the responses
+        var responses = JSON.parse(data.responses);
+        // initialize an array of 0s
+        var comprehensionTracker = _.map(comprehensionQuestions, function(item){return 0});
+        var questionCounter = 0;
+        score = _.reduce(responses, function(tally, response, questionNumber){
+           if (response == correctAnswers[questionNumber]) {
+             comprehensionTracker[questionCounter] = 1
+             tally += 1
+           }
+           questionCounter+=1
+           return tally
+        }, 0)
+        comprehensionRounds.push(comprehensionTracker);
+      }
+    };
+
+    var feedback1 = {
+      type: 'instructions',
+      pages: function(){
+        if (score < 4){
+          return ['You got ' + score + '/4 correct. We will go through the instructions and demonstration again.'];
+        } else {
+          return ["You got them all right! We're going to repeat the task twice, each time with a slight variation in instructions and with a different set of urns (and bead colors)."];
+        }
+      },
+      show_clickable_nav: true
+    };
+
+    // node for looping through instructions until score is 5 (out of 5 questions)
+
+    var loop_node = {
+      timeline: [startInstructions, trainingTrial, comprehensionInstructions, comprehension1, feedback1],
+      loop_function: function(data){
+        if (score==comprehensionQuestions.length){
+          return false;
+        } else {
+          return true;
+        }
+      }
+    };
+
+    // trial data
+
+    var colors = jsPsych.randomization.shuffle([[0, 102, 153], [0, 153, 255], [51, 51, 255], [153, 153, 255], [255, 0, 255], [255, 153, 153]]);
+
+    var instructionsDTD = {
+      type: 'instructions',
+      pages: ["In <b>this</b> version of the task, it will be <b>up to you</b> to decide how many beads you'd like to draw from the urn before guessing the majority color of the urn.<br><br>"+
+      "After each draw, we'll ask you if you'd like to see another bead, or are ready to make your decision.<br><br>"+
+      "Whenever you're <b>confident</b> what the majority color in the urn is, just click that you're ready to decide."],
+      show_clickable_nav: true
+    };
+
+    var instructionsGE = {
+      type: 'instructions',
+      pages: ["In <b>this</b> version of the task, you will see 10 beads before you can make a decision about what the majority color is.<br><br>"+
+      "After each draw, you'll rate how confident you are.<br><br>"+
+      "Once you've seen 10 beads, we will ask you to make a decision about what the majority color is."],
+      show_clickable_nav: true
+    };
+
+    var drawsDTD;
+    if(Math.random()<0.5){
+      drawsDTD = [0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0]
+    } else {
+      drawsDTD = [1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1]
+    }
+
+    beadDTD = {
+      type: 'beadtask',
+      firstColor: colors[0],
+      colorRatio: 0.6,
+      draws: drawsDTD,
+      beadCount: 100,
+      record: true,
+      graded: true,
+      feedback: false,
+      sequential: true,
+      drawCount: 30
+    };
+
+    var drawsGE;
+    if(Math.random()<0.5){
+      drawsGE = [0, 0, 1, 0, 0, 1, 0, 0, 1, 0]
+    } else {
+      drawsGE = [1, 1, 0, 1, 1, 0, 1, 1, 0, 1]
+    }
+
+
+    beadGE = {
+      type: 'beadtask',
+      firstColor: colors[1],
+      colorRatio: 0.6,
+      draws: drawsGE,
+      beadCount: 100,
+      record: true,
+      graded: true,
+      feedback: false,
+      sequential: true,
+      allowChoice: false,
+      drawCount: 10
+    };
+
+    // timeline.push(consent);
+    timeline.push(mainInstructions);
+    timeline.push(loop_node);
+    timeline.push(instructionsDTD);
+    timeline.push(beadDTD);
+    timeline.push(instructionsGE);
+    timeline.push(beadGE);
+
+
+    jsPsych.init({
+        default_iti: 500,
+        show_progress_bar: true,
+        preload_images: ['img/greek-urn-md.png'],
+        exclusions: {
+          min_width: 800,
+          min_height: 600
+        },
+        timeline: timeline,
+        on_finish: function(){
+          window.location.href = "/finish";
+        }
+    });
+
+
+    </script>
+</html>
